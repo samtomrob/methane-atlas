@@ -1,0 +1,14 @@
+id: sron-plumes
+name: SRON — weekly TROPOMI super-emitter plume list
+category: methane-plumes
+license: CC BY 4.0 (credit SRON; cite Schuit et al. 2023)
+attribution: "SRON Netherlands Institute for Space Research"
+auth: none
+cadence: weekly CSV
+verified: 2026-08-14 (current to week 32, 2026-08-10)
+urls:
+  - url: https://www.sron.nl/methane-emissions/
+    expect: [200]
+notes: >
+  7 km localization — flagged "coarse" in UI. Same detections feed the CAMS
+  Methane Hotspot Explorer.

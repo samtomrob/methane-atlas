@@ -1,0 +1,15 @@
+id: methanesat-archive
+name: MethaneSAT archive (satellite lost 2025-06-20)
+category: methane-plumes
+license: MethaneSAT Content License (custom — raw L3/L4 redistribution PROHIBITED; derivatives allowed)
+attribution: "MethaneSAT LLC / EDF"
+auth: portal open; GEE access via request form (owner action, optional)
+cadence: static archive Mar 2024–Jun 2025; backlog scenes still being released
+verified: 2026-08-14
+urls:
+  - url: https://portal.methanesat.org/
+    expect: [200, 403]
+notes: >
+  Derived/link-out layer only — never re-host rasters. AU scene coverage
+  unconfirmed (GEE public-preview lists US/Turkmenistan/Venezuela regions);
+  owner to confirm interactively on the portal before task 2.1b proceeds.

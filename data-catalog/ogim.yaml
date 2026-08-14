@@ -1,0 +1,16 @@
+id: ogim
+name: EDF OGIM v2.7 — oil & gas infrastructure compilation
+category: infrastructure
+license: CC BY 4.0
+attribution: "Omara et al., EDF OGIM v2.7"
+auth: none (direct Zenodo download)
+cadence: ~annual (v2.7 = Mar 2025, source data to Feb 2025)
+verified: 2026-08-14
+urls:
+  - url: https://zenodo.org/records/15103476
+    expect: [200]
+notes: >
+  3.1 GB GeoPackage: wells (4.5M), pipelines, compressor stations, processing,
+  LNG, refineries, offshore platforms. AU strong, PNG sparse. Ingest in CI
+  (not on dev machines); ROI-crop wells/processing for z10+ layers.
+  Also mirrored in GEE as EDF/OGIM/current.

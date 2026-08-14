@@ -1,0 +1,15 @@
+id: imeo-mars
+name: UNEP IMEO Eye on Methane — MARS detections
+category: methane-plumes
+license: CC BY-NC-SA 4.0 (noncommercial + share-alike; per D-7)
+attribution: "UNEP International Methane Emissions Observatory"
+auth: none
+cadence: detections published 30 days post-event; MARS-S2L bi-weekly
+verified: 2026-08-14
+urls:
+  - url: https://methanedata.unep.org/
+    expect: [200, 403]
+notes: >
+  Site 403s scripted fetches — fetcher needs a polite browser-like UA and a
+  manual-refresh fallback. CSV/GeoJSON downloads, no login. Expanded to coal
+  and waste sectors in 2026. Share-alike noted on the attribution page.

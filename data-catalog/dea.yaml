@@ -1,0 +1,16 @@
+id: dea
+name: Digital Earth Australia — Land Cover 2.0 & services (Phase 4)
+category: deforestation-carbon
+license: CC BY 4.0
+attribution: "Digital Earth Australia (Geoscience Australia)"
+auth: none
+cadence: annual (1988–2025)
+verified: 2026-08-14
+urls:
+  - url: https://explorer.dea.ga.gov.au/stac/
+    expect: [200]
+  - url: https://ows.dea.ga.gov.au/?service=WMS&request=GetCapabilities
+    expect: [200]
+notes: >
+  Product ga_ls_landcover_class_cyear_3 (30 m annual). WMS/WMTS drop straight
+  into MapLibre. QLD SLATS S2 series complements with attributed clearing.

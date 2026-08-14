@@ -1,0 +1,18 @@
+name: source-probe
+
+# Weekly canary: fail loudly when any data-catalog URL drifts.
+on:
+  schedule:
+    - cron: "0 20 * * 1" # Mondays 20:00 UTC = Tuesday morning AEST
+  workflow_dispatch:
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v4
+      - run: uv sync
+        working-directory: pipeline
+      - run: uv run matlas probe
+        working-directory: pipeline

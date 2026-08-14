@@ -1,0 +1,20 @@
+id: cdse-tropomi
+name: Copernicus Data Space — Sentinel-5P TROPOMI L2 CH4
+category: methane-concentration
+license: Copernicus Sentinel Data Terms (free incl. commercial; attribution required)
+attribution: "Contains modified Copernicus Sentinel data (2026)"
+auth: free CDSE account; OAuth2 token for downloads
+cadence: daily granules, ~1–5 day latency (OFFL); RPRO for reprocessed history
+verified: 2026-08-14
+urls:
+  - url: https://stac.dataspace.copernicus.eu/v1/
+    expect: [200]
+  - url: https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$top=1&$filter=contains(Name,%27L2__CH4___%27)
+    expect: [200]
+  - url: https://identity.dataspace.copernicus.eu/auth/realms/CDSE/protocol/openid-connect/token
+    expect: [200, 400, 405]
+    requires: CDSE_CLIENT_ID
+notes: >
+  Product L2__CH4___ (no NRTI stream for CH4). qa_value >= 0.5 filtering,
+  bias-corrected XCH4 band. S5P-PAL no longer lists CH4 (Mar 2026) — use CDSE
+  RPRO for reprocessing. Ongoing weekly composites route (D-3).

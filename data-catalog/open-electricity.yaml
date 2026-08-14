@@ -1,0 +1,15 @@
+id: open-electricity
+name: Open Electricity (OpenNEM) — facility registry
+category: infrastructure
+license: CC BY-NC 4.0 (noncommercial — per project decision D-7)
+attribution: "Open Electricity"
+auth: none (facility GeoJSON); API key for time series only
+cadence: continuously maintained
+verified: 2026-08-14
+urls:
+  - url: https://data.openelectricity.org.au/v3/geo/au_facilities.json
+    expect: [200]
+notes: >
+  481 stations with unit-level duid_data (fuel_tech gas_ocgt/ccgt/steam/recip/wcmg).
+  gas_wcmg = waste coal mine gas — literally methane capture; tagged as subtype.
+  NEM+WEM only (no PNG). GEM GOGPT is the fully-open alternative if NC ever bites.

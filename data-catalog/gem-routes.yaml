@@ -1,0 +1,16 @@
+id: gem-routes
+name: Global Energy Monitor — GOIT/GGIT pipeline route geometries
+category: infrastructure
+license: CC BY 4.0 (GEM policy; repo has no LICENSE file — confirmed policy page before redistribution)
+attribution: "Global Energy Monitor"
+auth: none
+cadence: quarterly-ish (tracker releases)
+verified: 2026-08-14
+urls:
+  - url: https://api.github.com/repos/GlobalEnergyMonitor/GOIT-GGIT-pipeline-routes
+    expect: [200]
+notes: >
+  6,800+ per-project GeoJSONs under data/individual-routes/{gas,liquid,hydrogen}-pipelines,
+  keyed by ProjectID (filename). Fetch as one tarball. No country property —
+  we bbox-filter and keep PNG-side routes (see infra.py PNG_LAT_SPLIT).
+  Includes PNG LNG onshore + subsea route. Enrich with GGIT xlsx (form) later.

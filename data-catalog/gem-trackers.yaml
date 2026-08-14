@@ -1,0 +1,22 @@
+id: gem-trackers
+name: Global Energy Monitor — tracker spreadsheets (GGIT, GCMT, GOGET, GOGPT)
+category: infrastructure
+license: CC BY 4.0
+attribution: "Global Energy Monitor"
+auth: download form (owner email; xlsx links delivered)
+cadence: annual–biannual per tracker (GCMT Aug 2026; GOGPT Jan 2026; GOGET Mar 2026)
+verified: 2026-08-14
+urls:
+  - url: https://globalenergymonitor.org/projects/global-gas-infrastructure-tracker/download-data/
+    expect: [200]
+  - url: https://globalenergymonitor.org/projects/global-coal-mine-tracker/download-data/
+    expect: [200]
+  - url: https://globalenergymonitor.org/projects/global-oil-gas-extraction-tracker/download-data/
+    expect: [200]
+  - url: https://globalenergymonitor.org/projects/global-oil-gas-plant-tracker/download-data/
+    expect: [200]
+notes: >
+  OWNER ACTION: complete each tracker's download form; drop the xlsx files in
+  data/gem/ (gitignored). GCMT carries per-mine methane estimates; GGIT xlsx
+  keys ProjectID→attributes for the routes repo; GOGET adds fields; GOGPT adds
+  PNG plants if above size threshold.

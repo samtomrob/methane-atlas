@@ -1,0 +1,19 @@
+id: emit
+name: NASA EMIT — methane plume complexes (EMITL2BCH4PLM v002)
+category: methane-plumes
+license: NASA open (no restrictions; cite DOI 10.5067/EMIT/EMITL2BCH4PLM.002)
+attribution: "NASA EMIT / JPL"
+auth: free Earthdata login (token) for downloads
+cadence: irregular (ISS overpasses; plumes posted after review)
+verified: 2026-08-14
+urls:
+  - url: https://cmr.earthdata.nasa.gov/stac/LPCLOUD
+    expect: [200]
+  - url: https://earth.jpl.nasa.gov/emit/data/data-portal/Greenhouse-Gases/
+    expect: [200]
+  - url: https://cmr.earthdata.nasa.gov/search/granules.json?collection_concept_id=C3242707413-LPCLOUD&page_size=1
+    expect: [200]
+    requires: EARTHDATA_TOKEN
+notes: >
+  V002 (Feb 2026) includes emission rates + uncertainty, manually reviewed.
+  60 m; ±51.6° covers AU+PNG. V001 decommissioned Mar 2026.

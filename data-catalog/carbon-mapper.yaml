@@ -1,0 +1,17 @@
+id: carbon-mapper
+name: Carbon Mapper — plume catalog (Tanager-1, EMIT, aircraft)
+category: methane-plumes
+license: free for noncommercial use with attribution (per D-7; confirm exact Terms text before launch)
+attribution: "Carbon Mapper"
+auth: free portal account; JWT via /api/v1/token/pair
+cadence: continuous (Tanager plumes ~30 days post-observation)
+verified: 2026-08-14
+urls:
+  - url: https://api.carbonmapper.org/api/v1/openapi.json
+    expect: [200]
+  - url: https://api.carbonmapper.org/api/v1/catalog/plumes/annotated?limit=1
+    expect: [200, 401]
+    requires: CARBON_MAPPER_TOKEN
+notes: >
+  Richest AU point-source feed (~271 AU plumes since 2023, mostly coal, ~51
+  Bowen Basin). STAC at /api/v1/stac/. Rate-limited — be polite.

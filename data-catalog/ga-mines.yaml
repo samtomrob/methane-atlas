@@ -1,0 +1,15 @@
+id: ga-mines
+name: Geoscience Australia — Australian Operating Mines
+category: infrastructure
+license: CC BY 4.0
+attribution: "© Commonwealth of Australia (Geoscience Australia)"
+auth: none
+cadence: weekly (map service)
+verified: 2026-08-14
+urls:
+  - url: https://services.ga.gov.au/gis/rest/services/AustralianOperatingMines/MapServer?f=json
+    expect: [200]
+notes: >
+  Layers: 0 operating, 1 developing, 2 care & maintenance. Points with
+  commodity_group; coal filter is commodity_group == "Coal". No CH4 attributes
+  (those come from GEM GCMT once the owner's download-form xlsx arrives).

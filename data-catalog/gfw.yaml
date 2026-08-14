@@ -1,0 +1,20 @@
+id: gfw
+name: Global Forest Watch — loss, alerts, carbon flux (Phase 4)
+category: deforestation-carbon
+license: CC BY 4.0
+attribution: "Hansen/UMD/Google/USGS/NASA; Global Forest Watch"
+auth: tiles open; Data API queries need free API key
+cadence: loss annual (v1.13 → 2025); integrated alerts near-daily (global since Jan 2026)
+verified: 2026-08-14
+urls:
+  - url: https://tiles.globalforestwatch.org/openapi.json
+    expect: [200]
+  - url: https://data-api.globalforestwatch.org/
+    expect: [200]
+  - url: https://data-api.globalforestwatch.org/dataset/umd_tree_cover_loss/latest
+    expect: [200, 401]
+    requires: GFW_API_KEY
+notes: >
+  Carbon-lost per polygon = one POST to /dataset/{d}/latest/query/json with
+  SQL + GeoJSON. Platform rebranding to Global Nature Watch — expect URL churn;
+  this file is the only place URLs live. RADD covers PNG; DIST-ALERT covers AU.

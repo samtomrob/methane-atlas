@@ -1,0 +1,17 @@
+id: openfreemap
+name: OpenFreeMap — hosted vector basemap tiles
+category: basemap
+license: map data ODbL (© OpenStreetMap contributors); tiles free, no key, fair use
+attribution: "© OpenStreetMap contributors, OpenFreeMap"
+auth: none
+cadence: continuous
+verified: 2026-08-14
+urls:
+  - url: https://tiles.openfreemap.org/styles/positron
+    expect: [200]
+  - url: https://tiles.openfreemap.org/styles/dark
+    expect: [200]
+notes: >
+  Styles liberty/bright/positron/dark all verified live. Fallback: self-hosted
+  Protomaps extract on R2, or Carto basemaps. Web app uses positron (light) /
+  dark (dark theme).

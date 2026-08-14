@@ -1,0 +1,17 @@
+id: ga-pipelines
+name: Geoscience Australia — Oil & Gas Pipelines of Australia
+category: infrastructure
+license: CC BY 4.0
+attribution: "© Commonwealth of Australia (Geoscience Australia)"
+auth: none
+cadence: irregular (vintage 2022)
+verified: 2026-08-14
+urls:
+  - url: https://services.ga.gov.au/gis/rest/services/Oil_Gas_Pipelines/MapServer?f=json
+    expect: [200]
+  - url: https://services.ga.gov.au/gis/rest/services/Oil_Gas_Pipelines/MapServer/1/query?where=1%3D1&outFields=objectid&resultRecordCount=1&f=geojson
+    expect: [200]
+notes: >
+  Layer 0 oil, layer 1 gas (polylines). WA/NT onshore represented as corridor
+  polygons in the source dataset. Paginate at 2000 records. Directory listing
+  403s non-browser user agents; layer queries are fine.

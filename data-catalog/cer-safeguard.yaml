@@ -1,0 +1,19 @@
+id: cer-safeguard
+name: Clean Energy Regulator — Safeguard & NGER facility data
+category: reported-emissions
+license: CC BY (confirm 3.0 AU vs 4.0 per file)
+attribution: "Clean Energy Regulator"
+auth: none
+cadence: annual (each Feb–Apr for prior FY)
+verified: 2026-08-14
+urls:
+  - url: https://cer.gov.au/markets/reports-and-data/safeguard-data/2024-25-baselines-and-emissions-data
+    expect: [200, 403]
+  - url: https://cer.gov.au/markets/reports-and-data/nger-reporting-data-and-registers
+    expect: [200, 403]
+notes: >
+  Safeguard table has per-facility "GHG Methane" and "GHG Nitrous oxide"
+  (tCO2-e) columns — the reported-vs-observed join. NGER methods data shows
+  each facility's fugitive-CH4 estimation Method (1–4). No coordinates —
+  name/operator fuzzy join to map features with one-time manual review.
+  Exact CSV URLs change yearly; probe the hub pages.
