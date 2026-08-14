@@ -154,6 +154,15 @@ body {
 }
 .period b { color: var(--ink); font-size: 0.86rem; font-variant-numeric: tabular-nums; }
 
+.caveat {
+  margin: 8px 0 0;
+  font-size: 0.7rem;
+  line-height: 1.45;
+  color: var(--muted);
+  border-left: 2px solid var(--line);
+  padding-left: 8px;
+}
+
 .maplibregl-popup-content {
   background: var(--surface) !important;
   color: var(--ink) !important;

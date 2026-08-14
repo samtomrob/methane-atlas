@@ -65,6 +65,36 @@ def main(argv: list[str] | None = None) -> None:
     )
     p_render.add_argument("--kind", choices=("week", "month"), default="month")
 
+    p_clim = sub.add_parser(
+        "climatology",
+        help="average every composite into a long-term enhancement layer (low-noise)",
+    )
+    p_clim.add_argument(
+        "--rasters", type=Path, default=REPO_ROOT / "data" / "rasters", help="composite dir"
+    )
+    p_clim.add_argument("--kind", choices=("week", "month"), default="month")
+
+    p_hot = sub.add_parser(
+        "hotspots",
+        help="find methane enhancement that persists across months and match it to infrastructure",
+    )
+    p_hot.add_argument(
+        "--rasters", type=Path, default=REPO_ROOT / "data" / "rasters", help="composite dir"
+    )
+    p_hot.add_argument(
+        "--data",
+        type=Path,
+        default=REPO_ROOT / "web" / "public" / "data",
+        help="dir holding the infrastructure GeoJSON layers",
+    )
+    p_hot.add_argument(
+        "--out",
+        type=Path,
+        default=REPO_ROOT / "web" / "public" / "data" / "hotspots.json",
+        help="output file",
+    )
+    p_hot.add_argument("--kind", choices=("week", "month"), default="month")
+
     args = parser.parse_args(argv)
 
     if args.command == "probe":
@@ -91,6 +121,14 @@ def main(argv: list[str] | None = None) -> None:
         from . import render
 
         render.run(args.rasters, args.out, kind=args.kind)
+    elif args.command == "climatology":
+        from . import climatology
+
+        climatology.run(args.rasters, kind=args.kind)
+    elif args.command == "hotspots":
+        from . import hotspots
+
+        hotspots.run(args.rasters, args.data, args.out, kind=args.kind)
     elif args.command == "infra":
         from . import infra
 

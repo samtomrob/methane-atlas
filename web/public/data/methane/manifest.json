@@ -1,0 +1,197 @@
+{
+  "kind": "month",
+  "bounds": [
+    108.0,
+    -45.0,
+    160.0,
+    1.0
+  ],
+  "climatology": {
+    "url": "average/anomaly.png",
+    "scale": {
+      "min": -8.2,
+      "max": 8.2,
+      "unit": "ppb"
+    },
+    "n_periods": 20,
+    "median_stderr_ppb": 0.93,
+    "caveat": "Observed column enhancement, not an emissions estimate. Coal and CSG basins read positive, but so does the WA wheatbelt where TROPOMI has known surface-albedo sensitivity, so surface bias is not fully separated from real signal at this resolution."
+  },
+  "scales": {
+    "mean": {
+      "min": 1840.5,
+      "max": 1893.5,
+      "unit": "ppb"
+    },
+    "anomaly": {
+      "min": -16.4,
+      "max": 16.4,
+      "unit": "ppb"
+    }
+  },
+  "periods": [
+    {
+      "period": "2025-01",
+      "start": "2025-01-01",
+      "coverage_pct": 22.77,
+      "background_ppb": 1852.2,
+      "max_anomaly_ppb": 50.7,
+      "median_obs_per_cell": 4.0
+    },
+    {
+      "period": "2025-02",
+      "start": "2025-02-01",
+      "coverage_pct": 23.66,
+      "background_ppb": 1852.1,
+      "max_anomaly_ppb": 46.1,
+      "median_obs_per_cell": 4.0
+    },
+    {
+      "period": "2025-03",
+      "start": "2025-03-01",
+      "coverage_pct": 24.16,
+      "background_ppb": 1855.8,
+      "max_anomaly_ppb": 43.4,
+      "median_obs_per_cell": 3.0
+    },
+    {
+      "period": "2025-04",
+      "start": "2025-04-01",
+      "coverage_pct": 25.92,
+      "background_ppb": 1863.2,
+      "max_anomaly_ppb": 57.0,
+      "median_obs_per_cell": 5.0
+    },
+    {
+      "period": "2025-05",
+      "start": "2025-05-01",
+      "coverage_pct": 27.09,
+      "background_ppb": 1867.2,
+      "max_anomaly_ppb": 50.7,
+      "median_obs_per_cell": 6.0
+    },
+    {
+      "period": "2025-06",
+      "start": "2025-06-01",
+      "coverage_pct": 27.17,
+      "background_ppb": 1870.4,
+      "max_anomaly_ppb": 60.1,
+      "median_obs_per_cell": 6.0
+    },
+    {
+      "period": "2025-07",
+      "start": "2025-07-01",
+      "coverage_pct": 26.69,
+      "background_ppb": 1869.3,
+      "max_anomaly_ppb": 57.0,
+      "median_obs_per_cell": 6.0
+    },
+    {
+      "period": "2025-08",
+      "start": "2025-08-01",
+      "coverage_pct": 27.79,
+      "background_ppb": 1870.2,
+      "max_anomaly_ppb": 56.2,
+      "median_obs_per_cell": 6.0
+    },
+    {
+      "period": "2025-09",
+      "start": "2025-09-01",
+      "coverage_pct": 27.75,
+      "background_ppb": 1867.0,
+      "max_anomaly_ppb": 51.6,
+      "median_obs_per_cell": 6.0
+    },
+    {
+      "period": "2025-10",
+      "start": "2025-10-01",
+      "coverage_pct": 27.37,
+      "background_ppb": 1868.9,
+      "max_anomaly_ppb": 44.2,
+      "median_obs_per_cell": 5.0
+    },
+    {
+      "period": "2025-11",
+      "start": "2025-11-01",
+      "coverage_pct": 24.76,
+      "background_ppb": 1863.9,
+      "max_anomaly_ppb": 45.3,
+      "median_obs_per_cell": 4.0
+    },
+    {
+      "period": "2025-12",
+      "start": "2025-12-01",
+      "coverage_pct": 24.97,
+      "background_ppb": 1856.6,
+      "max_anomaly_ppb": 48.0,
+      "median_obs_per_cell": 4.0
+    },
+    {
+      "period": "2026-01",
+      "start": "2026-01-01",
+      "coverage_pct": 21.75,
+      "background_ppb": 1854.8,
+      "max_anomaly_ppb": 46.7,
+      "median_obs_per_cell": 5.0
+    },
+    {
+      "period": "2026-02",
+      "start": "2026-02-01",
+      "coverage_pct": 15.85,
+      "background_ppb": 1855.5,
+      "max_anomaly_ppb": 35.7,
+      "median_obs_per_cell": 3.0
+    },
+    {
+      "period": "2026-03",
+      "start": "2026-03-01",
+      "coverage_pct": 23.59,
+      "background_ppb": 1860.0,
+      "max_anomaly_ppb": 59.8,
+      "median_obs_per_cell": 3.0
+    },
+    {
+      "period": "2026-04",
+      "start": "2026-04-01",
+      "coverage_pct": 26.69,
+      "background_ppb": 1875.6,
+      "max_anomaly_ppb": 49.7,
+      "median_obs_per_cell": 4.0
+    },
+    {
+      "period": "2026-05",
+      "start": "2026-05-01",
+      "coverage_pct": 26.62,
+      "background_ppb": 1872.5,
+      "max_anomaly_ppb": 64.5,
+      "median_obs_per_cell": 4.0
+    },
+    {
+      "period": "2026-06",
+      "start": "2026-06-01",
+      "coverage_pct": 26.66,
+      "background_ppb": 1878.1,
+      "max_anomaly_ppb": 59.9,
+      "median_obs_per_cell": 4.0
+    },
+    {
+      "period": "2026-07",
+      "start": "2026-07-01",
+      "coverage_pct": 27.36,
+      "background_ppb": 1880.7,
+      "max_anomaly_ppb": 48.4,
+      "median_obs_per_cell": 6.0
+    },
+    {
+      "period": "2026-08",
+      "start": "2026-08-01",
+      "coverage_pct": 23.31,
+      "background_ppb": 1880.2,
+      "max_anomaly_ppb": 40.2,
+      "median_obs_per_cell": 2.0
+    }
+  ],
+  "source": "Sentinel-5P TROPOMI L2 CH4 via Copernicus Data Space",
+  "attribution": "Contains modified Copernicus Sentinel data (2026)",
+  "method": "qa_value >= 0.5, land pixels only, binned to 0.05 degrees. Anomaly is the difference from a latitude-banded background median, shown only where a cell has at least 3 observations."
+}

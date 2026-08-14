@@ -24,10 +24,18 @@ const LAYERS: LayerDef[] = [
 ];
 
 type Band = "anomaly" | "mean";
+type View = Band | "average";
 
 type Manifest = {
   kind: string;
   bounds: [number, number, number, number];
+  climatology: {
+    url: string;
+    scale: { min: number; max: number; unit: string };
+    n_periods: number | null;
+    median_stderr_ppb: number | null;
+    caveat: string | null;
+  } | null;
   scales: Record<Band, { min: number; max: number; unit: string }>;
   periods: {
     period: string;
@@ -88,7 +96,7 @@ export default function MethaneMap() {
   const [ready, setReady] = useState(false);
   const [manifest, setManifest] = useState<Manifest | null>(null);
   const [periodIdx, setPeriodIdx] = useState(0);
-  const [band, setBand] = useState<Band>("anomaly");
+  const [view, setView] = useState<View>("average");
   const [showMethane, setShowMethane] = useState(true);
   const [visible, setVisible] = useState<Record<string, boolean>>(
     Object.fromEntries(LAYERS.map((l) => [l.id, true])),
@@ -175,7 +183,10 @@ export default function MethaneMap() {
   useEffect(() => {
     const map = mapRef.current;
     if (!ready || !map || !manifest || !period) return;
-    const url = `/data/methane/${band}/${period.period}.png`;
+    const url =
+      view === "average" && manifest.climatology
+        ? `/data/methane/${manifest.climatology.url}`
+        : `/data/methane/${view === "average" ? "anomaly" : view}/${period.period}.png`;
     const existing = map.getSource("methane") as maplibregl.ImageSource | undefined;
     if (!existing) {
       map.addSource("methane", {
@@ -196,7 +207,7 @@ export default function MethaneMap() {
       existing.updateImage({ url });
     }
     map.setLayoutProperty("methane", "visibility", showMethane ? "visible" : "none");
-  }, [ready, manifest, period, band, showMethane]);
+  }, [ready, manifest, period, view, showMethane]);
 
   const toggle = useCallback(
     (id: string) => {
@@ -213,11 +224,12 @@ export default function MethaneMap() {
     [],
   );
 
-  const scale = manifest?.scales[band];
+  const scale =
+    view === "average" ? manifest?.climatology?.scale : manifest?.scales[view as Band];
   const legendGradient =
-    band === "anomaly"
-      ? "linear-gradient(90deg,#2166ac,#67a9cf,#d1e5f0,#f7f7f7,#fddbc7,#ef8a62,#b2182b)"
-      : "linear-gradient(90deg,#000004,#1c1044,#4f127b,#812581,#b5367a,#e55064,#fb8761,#fec287,#fcfdbf)";
+    view === "mean"
+      ? "linear-gradient(90deg,#000004,#1c1044,#4f127b,#812581,#b5367a,#e55064,#fb8761,#fec287,#fcfdbf)"
+      : "linear-gradient(90deg,#2166ac,#67a9cf,#d1e5f0,#f7f7f7,#fddbc7,#ef8a62,#b2182b)";
 
   return (
     <>
@@ -238,41 +250,65 @@ export default function MethaneMap() {
               Show methane layer
             </label>
             <div className="seg">
-              <button
-                className={band === "anomaly" ? "on" : ""}
-                onClick={() => setBand("anomaly")}
-              >
-                Enhancement
+              {manifest.climatology ? (
+                <button className={view === "average" ? "on" : ""} onClick={() => setView("average")}>
+                  Average
+                </button>
+              ) : null}
+              <button className={view === "anomaly" ? "on" : ""} onClick={() => setView("anomaly")}>
+                Monthly
               </button>
-              <button className={band === "mean" ? "on" : ""} onClick={() => setBand("mean")}>
+              <button className={view === "mean" ? "on" : ""} onClick={() => setView("mean")}>
                 Concentration
               </button>
             </div>
             <div className="legend">
               <div className="bar" style={{ background: legendGradient }} />
               <div className="ticks">
-                <span>
-                  {scale ? (band === "anomaly" ? scale.min.toFixed(0) : scale.min.toFixed(0)) : ""}
-                </span>
-                <span>{band === "anomaly" ? "ppb vs background" : "ppb"}</span>
+                <span>{scale ? scale.min.toFixed(0) : ""}</span>
+                <span>{view === "mean" ? "ppb" : "ppb vs background"}</span>
                 <span>{scale ? `+${scale.max.toFixed(0)}` : ""}</span>
               </div>
             </div>
-            <input
-              className="slider"
-              type="range"
-              min={0}
-              max={manifest.periods.length - 1}
-              value={periodIdx}
-              onChange={(e) => setPeriodIdx(Number(e.target.value))}
-              aria-label="Time period"
-            />
-            <div className="period">
-              <b>{period.period}</b>
-              <span>
-                {period.coverage_pct}% covered · background {period.background_ppb} ppb
-              </span>
-            </div>
+
+            {view === "average" ? (
+              <div className="period">
+                <b>{manifest.climatology?.n_periods ?? manifest.periods.length}-month average</b>
+                <span>
+                  ±{manifest.climatology?.median_stderr_ppb ?? "?"} ppb typical uncertainty ·
+                  coastal cells excluded
+                </span>
+              </div>
+            ) : (
+              <>
+                <input
+                  className="slider"
+                  type="range"
+                  min={0}
+                  max={manifest.periods.length - 1}
+                  value={periodIdx}
+                  onChange={(e) => setPeriodIdx(Number(e.target.value))}
+                  aria-label="Time period"
+                />
+                <div className="period">
+                  <b>{period.period}</b>
+                  <span>
+                    {period.coverage_pct}% covered · background {period.background_ppb} ppb ·
+                    median {period.median_obs_per_cell} obs/cell
+                  </span>
+                </div>
+              </>
+            )}
+
+            <p className="caveat">
+              {view === "average"
+                ? "Observed column enhancement, not emissions. Coal and gas basins read positive, but so does the WA wheatbelt where there is no known source — TROPOMI responds to surface brightness too, and here that effect is larger than the Bowen Basin signal."
+                : "A single month is mostly retrieval noise at this resolution — the median cell has only 4–6 observations. Use the average for anything you want to rely on."}
+            </p>
+            <p className="caveat">
+              Papua New Guinea has almost no coverage (0.2% of cells): tropical cloud blocks the
+              retrieval. PNG methane will come from the plume layers, not this one.
+            </p>
           </>
         ) : (
           <div className="notice">
@@ -297,8 +333,12 @@ export default function MethaneMap() {
           {manifest ? `${manifest.attribution}. ` : ""}Infrastructure: Geoscience Australia &amp;
           Global Energy Monitor (CC BY 4.0), Open Electricity (CC BY-NC 4.0). Basemap ©
           OpenStreetMap contributors.{" "}
-          <a href="https://github.com/samtomrob/methane-atlas" target="_blank" rel="noreferrer">
-            source &amp; method
+          <a
+            href="https://github.com/samtomrob/methane-atlas/blob/main/docs/FINDINGS.md"
+            target="_blank"
+            rel="noreferrer"
+          >
+            method &amp; known limitations
           </a>
         </footer>
       </div>

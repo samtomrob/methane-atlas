@@ -178,9 +178,35 @@ def run(raster_dir: Path, out_dir: Path, kind: str = "month") -> dict:
         )
         print(f"  rendered {entry['period']}")
 
+    # Long-term average, if it has been built. Rendered on its own symmetric
+    # scale because its amplitude is a few ppb, not tens.
+    climatology = None
+    clim_path = raster_dir / "climatology.tif"
+    if clim_path.exists():
+        with rasterio.open(clim_path) as ds:
+            clim = ds.read(1)
+        finite = clim[np.isfinite(clim)]
+        if finite.size:
+            clim_limit = float(np.percentile(np.abs(finite), 99))
+            write_png(
+                out_dir / "average" / "anomaly.png",
+                colorize(clim, -clim_limit, clim_limit, "diverging"),
+            )
+            stats_path = raster_dir / "climatology.json"
+            clim_stats = json.loads(stats_path.read_text()) if stats_path.exists() else {}
+            climatology = {
+                "url": "average/anomaly.png",
+                "scale": {"min": round(-clim_limit, 1), "max": round(clim_limit, 1), "unit": "ppb"},
+                "n_periods": clim_stats.get("n_periods"),
+                "median_stderr_ppb": clim_stats.get("median_stderr_ppb"),
+                "caveat": clim_stats.get("caveat"),
+            }
+            print(f"  rendered long-term average (±{clim_limit:.1f} ppb)")
+
     manifest = {
         "kind": kind,
         "bounds": [LON_MIN, LAT_MIN, LON_MAX, LAT_MAX],
+        "climatology": climatology,
         "scales": {
             "mean": {"min": round(mean_lo, 1), "max": round(mean_hi, 1), "unit": "ppb"},
             "anomaly": {

@@ -1,0 +1,225 @@
+{
+  "generated_from": {
+    "periods": [
+      "2025-01",
+      "2025-02",
+      "2025-03",
+      "2025-04",
+      "2025-05",
+      "2025-06",
+      "2025-07",
+      "2025-08",
+      "2025-09",
+      "2025-10",
+      "2025-11",
+      "2025-12",
+      "2026-01",
+      "2026-02",
+      "2026-03",
+      "2026-04",
+      "2026-05",
+      "2026-06",
+      "2026-07",
+      "2026-08"
+    ],
+    "kind": "month"
+  },
+  "method": {
+    "elevated_threshold_ppb": 18.0,
+    "min_months_observed": 8,
+    "min_persistence": 0.5,
+    "cluster_radius_deg": 0.35,
+    "coast_buffer_cells": 3,
+    "cells_rejected_as_coastal": 405,
+    "anomaly_sd_ppb": 6.5,
+    "anomaly_p99_ppb": 14.4,
+    "note": "Nearest infrastructure is proximity only, not attribution. TROPOMI's ~7 km footprint cannot resolve individual facilities. Cells within the coast buffer are excluded: without that filter the persistence test surfaced a shoreline-wide artifact, because a footprint straddling the coast is biased systematically and therefore persistently."
+  },
+  "hotspots": [
+    {
+      "lon": 113.975,
+      "lat": -22.225,
+      "months_observed": 20,
+      "months_elevated": 14,
+      "persistence": 0.7,
+      "mean_anomaly_ppb": 20.1,
+      "peak_anomaly_ppb": 30.8,
+      "mean_obs_per_month": 8.0,
+      "coastal_fraction": 0.3,
+      "nearest_infrastructure": [
+        {
+          "layer": "pipelines_gas",
+          "name": "Macedon Wet Pipeline",
+          "subtype": "Gas pipeline",
+          "state": "Western Australia",
+          "country": "AU",
+          "distance_km": 75.7
+        },
+        {
+          "layer": "pipelines_oil",
+          "name": "Laverda to Vincent",
+          "subtype": "Oil pipeline",
+          "state": "Western Australia",
+          "country": "AU",
+          "distance_km": 79.2
+        },
+        {
+          "layer": "pipelines_gas",
+          "name": "Unknown",
+          "subtype": "Gas pipeline",
+          "state": "Western Australia",
+          "country": "AU",
+          "distance_km": 103.4
+        }
+      ]
+    },
+    {
+      "lon": 123.325,
+      "lat": -17.425,
+      "months_observed": 10,
+      "months_elevated": 8,
+      "persistence": 0.8,
+      "mean_anomaly_ppb": 19.5,
+      "peak_anomaly_ppb": 25.9,
+      "mean_obs_per_month": 4.9,
+      "coastal_fraction": 0.11,
+      "nearest_infrastructure": [
+        {
+          "layer": "pipelines_oil",
+          "name": "Ungani Pipeline",
+          "subtype": "Oil pipeline",
+          "state": "Western Australia",
+          "country": "AU",
+          "distance_km": 48.8
+        },
+        {
+          "layer": "pipelines_oil",
+          "name": "Sundown to West Terrace",
+          "subtype": "Oil pipeline",
+          "state": "Western Australia",
+          "country": "AU",
+          "distance_km": 99.4
+        },
+        {
+          "layer": "pipelines_oil",
+          "name": "Blina to Great Northern Highway",
+          "subtype": "Oil pipeline",
+          "state": "Western Australia",
+          "country": "AU",
+          "distance_km": 120.3
+        }
+      ]
+    },
+    {
+      "lon": 128.175,
+      "lat": -15.325,
+      "months_observed": 9,
+      "months_elevated": 5,
+      "persistence": 0.56,
+      "mean_anomaly_ppb": 18.9,
+      "peak_anomaly_ppb": 29.0,
+      "mean_obs_per_month": 4.6,
+      "coastal_fraction": 0.0,
+      "nearest_infrastructure": [
+        {
+          "layer": "pipelines_gas",
+          "name": "Blacktip to Cosmo Howley",
+          "subtype": "Gas pipeline",
+          "state": "Northern Territory",
+          "country": "AU",
+          "distance_km": 158.4
+        },
+        {
+          "layer": "pipelines_gas",
+          "name": "Blacktip to Cosmo Howley",
+          "subtype": "Gas pipeline",
+          "state": "Northern Territory",
+          "country": "AU",
+          "distance_km": 179.0
+        },
+        {
+          "layer": "pipelines_gas",
+          "name": "Ichthys",
+          "subtype": "Gas pipeline",
+          "state": "Northern Territory",
+          "country": "AU",
+          "distance_km": 308.1
+        }
+      ]
+    },
+    {
+      "lon": 116.875,
+      "lat": -34.825,
+      "months_observed": 8,
+      "months_elevated": 4,
+      "persistence": 0.5,
+      "mean_anomaly_ppb": 16.8,
+      "peak_anomaly_ppb": 34.9,
+      "mean_obs_per_month": 2.9,
+      "coastal_fraction": 0.01,
+      "nearest_infrastructure": [
+        {
+          "layer": "coal_mines",
+          "name": "Premier",
+          "subtype": "coal mine",
+          "state": "WA",
+          "country": "AU",
+          "distance_km": 165.4
+        },
+        {
+          "layer": "coal_mines",
+          "name": "Collie-Ewington",
+          "subtype": "coal mine",
+          "state": "WA",
+          "country": "AU",
+          "distance_km": 171.7
+        },
+        {
+          "layer": "pipelines_gas",
+          "name": "Worsley Lateral",
+          "subtype": "Gas pipeline",
+          "state": "Western Australia",
+          "country": "AU",
+          "distance_km": 190.0
+        }
+      ]
+    },
+    {
+      "lon": 123.175,
+      "lat": -33.725,
+      "months_observed": 8,
+      "months_elevated": 4,
+      "persistence": 0.5,
+      "mean_anomaly_ppb": 15.6,
+      "peak_anomaly_ppb": 21.4,
+      "mean_obs_per_month": 3.1,
+      "coastal_fraction": 0.06,
+      "nearest_infrastructure": [
+        {
+          "layer": "pipelines_gas",
+          "name": "Kambalda to Esperance",
+          "subtype": "Gas pipeline",
+          "state": "Western Australia",
+          "country": "AU",
+          "distance_km": 119.2
+        },
+        {
+          "layer": "pipelines_gas",
+          "name": "Kambalda Nickel Lateral",
+          "subtype": "Gas pipeline",
+          "state": "Western Australia",
+          "country": "AU",
+          "distance_km": 313.4
+        },
+        {
+          "layer": "gas_plants",
+          "name": "Kambalda",
+          "subtype": "gas power station",
+          "state": "WA",
+          "country": "AU",
+          "distance_km": 313.7
+        }
+      ]
+    }
+  ]
+}

@@ -38,6 +38,16 @@ _(verified via research agents 2026-08-14; details & links in DATA_SOURCES.md)_
 - **Infrastructure data is a solved problem — better than hoped.** GEM publishes pipeline **route GeoJSON on GitHub (no form), including the PNG LNG Hides→Port Moresby route** that OSM lacks; GCMT has **per-mine methane estimates** for every Australian coal mine (Aug 2026 release); Geoscience Australia's pipeline REST service exports GeoJSON directly; OGIM v2.7 (CC BY, no registration) fills wells/processing. Gas fields come as centroids only (no polygons) — the map shows labeled field markers, not acreage.
 - **Australia publishes facility-level reported methane.** The CER Safeguard table has per-facility "GHG Methane" (tCO2-e) columns, and NGER "methods data" discloses which fugitive-estimation method (1–4) each coal/O&G facility uses. Reported-vs-observed can therefore be **methane-vs-methane**, with the estimation-method caveat displayed — sharper than any comparison MethaneSAT's portal offered.
 
+## 2b. Revised priorities after the first baseline (2026-08-15)
+
+The 20-month TROPOMI baseline is built and measured. [FINDINGS.md](FINDINGS.md) has the numbers; the consequences for this plan:
+
+1. **TROPOMI is context, not detection.** Surface-albedo bias in the WA wheatbelt (+2.37 ppb) exceeds the Bowen Basin signal (+1.97 ppb), and 100% of "persistent hotspots" proved to be coastal artifact. No hotspot layer ships.
+2. **PNG gets no TROPOMI coverage at all** (0.2% of cells usable vs 58.2% for mainland Australia). The PNG half of the project depends entirely on plume imagers + infrastructure.
+3. **Phase 2 is promoted to the critical path** — it is the only route to facility-scale detection and the only route to any PNG signal.
+4. **Phase 3's comparison must use plumes, not TROPOMI anomalies.** Comparing reported methane against a column anomaly containing more artifact than signal would be meaningless and potentially defamatory.
+5. **New task: add Open Methane** (⚠️NC) as the Australian modeled-emissions layer — the correct instrument for the question concentrations can't answer.
+
 ## 3. Phases
 
 Each phase ships something usable. Tasks are written to be dispatched to build agents; each has acceptance criteria (AC).
