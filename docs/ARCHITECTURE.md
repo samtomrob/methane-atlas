@@ -39,9 +39,13 @@ No database, no tile server, no API server for the MVP. Everything the browser n
 
 ### 3.1 Concentration rasters (TROPOMI XCH4)
 
-- **Input**: Sentinel-5P L2 `CH4` (bias-corrected XCH4, qa filtering ≥ 0.5). Two candidate access routes — **decision point D-3** in BUILD_PLAN:
-  - **Route A (preferred if acceptable): Google Earth Engine** `COPERNICUS/S5P/OFFL/L3_CH4` — already qa-filtered and gridded; export weekly/monthly means for the ROI as GeoTIFF via the EE Python API. Cheapest backfill (2019→now in one batch job). Requires user's Google account registered for noncommercial EE use.
-  - **Route B (fully independent): Copernicus Data Space Ecosystem** — query granules via STAC/OData for the ROI, download L2 NetCDF, grid with xarray (0.05° target grid, inverse-distance or simple binning), qa-mask, composite. More code, no Google dependency. Used as the fallback and for any product EE lacks.
+- **Input**: Sentinel-5P L2 `CH4` (bias-corrected XCH4, qa filtering ≥ 0.5). Both routes are built (D-3 resolved: EE for backfill, CDSE for ongoing):
+  - **Route A — Google Earth Engine** `COPERNICUS/S5P/OFFL/L3_CH4`, already qa-filtered and gridded. Used for the 2019→now backfill.
+    - **Pull synchronously via `getDownloadURL`, not batch `Export`.** The ROI at 0.05° is ~1040×920 px (~4 MB/band), comfortably inside the request-size limit. This sidesteps both export destinations: `toCloudStorage` requires enabling GCP billing, and `toDrive` under a service account writes to the *service account's* invisible Drive namespace. Batch export remains the fallback if a product ever exceeds the limit.
+    - **Compute budget is the binding constraint**: noncommercial Community tier = **150 EECU-hours/month** (since Apr 2026). The backfill is therefore **chunked by year and resumable** — each period's output is immutable, so a quota stall resumes rather than restarts. `status.json` records the last completed period.
+  - **Route B — Copernicus Data Space Ecosystem** for the ongoing weekly job and anything EE lacks: query granules via OData/STAC, download L2 NetCDF, grid with xarray (0.05° target, qa-masked binning), composite.
+    - **Search over OData, download over S3** (CDSE's own recommendation): OData results expose an `S3Path` per product; bytes come from `eodata` bucket at `https://eodata.dataspace.copernicus.eu`.
+    - Hard limits: **4 concurrent S3 connections**, 2000 requests/min, 12 TB per rolling 30 days, and a **10-minute access token** (refresh mid-run on long jobs). Cross-host download redirects drop the auth header, so redirects are followed manually with the token re-attached per hop.
 - **Products** (per period: ISO week and calendar month):
   - `xch4_mean` — mean column XCH4 (ppb)
   - `xch4_anom` — anomaly vs. rolling 90-day regional median (ppb) — this is the "where is it elevated" layer
@@ -139,5 +143,6 @@ methane-atlas/
 | PNG cloud cover → sparse TROPOMI retrievals | Ship `valid_obs` layer; lean on point-source imagers + monthly (not weekly) composites for PNG messaging |
 | Offshore facilities invisible to TROPOMI (no glint retrievals in standard product) | State it in methodology; offshore coverage comes from plume imagers only |
 | Facility attribution overclaim | Confidence-tagged "nearest infrastructure" language everywhere; no automatic "X is emitting" statements |
-| EE noncommercial terms (if Route A) | Route B (CDSE) implemented as fallback from day one for the ongoing weekly job; EE used mainly for backfill |
+| EE noncommercial terms (Route A) | Route B (CDSE) is the ongoing path; EE used only for backfill |
+| EE 150 EECU-hr/month quota stalls the backfill | Chunked, resumable, immutable per-period outputs; upgrade path is the Contributor tier (needs billing) if it ever binds |
 | GEM/OSM license mixing | Layer-level source separation; attribution page generated from data-catalog |

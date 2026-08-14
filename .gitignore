@@ -1,7 +1,11 @@
-# secrets
+# secrets — never commit. secrets/ holds key files (e.g. the GEE service
+# account JSON); .env holds everything else.
 .env
 .env.*
 !.env.example
+secrets/
+*.pem
+*-service-account*.json
 
 # python
 __pycache__/

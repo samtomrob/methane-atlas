@@ -24,12 +24,21 @@ def main(argv: list[str] | None = None) -> None:
         "--out", type=Path, default=REPO_ROOT / "web" / "public" / "data", help="output dir"
     )
 
+    sub.add_parser(
+        "auth-check",
+        help="verify configured credentials actually work (never prints secret values)",
+    )
+
     args = parser.parse_args(argv)
 
     if args.command == "probe":
         from . import probe
 
         sys.exit(probe.run(args.catalog))
+    elif args.command == "auth-check":
+        from . import auth
+
+        sys.exit(auth.run())
     elif args.command == "infra":
         from . import infra
 

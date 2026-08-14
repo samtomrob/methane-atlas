@@ -21,6 +21,7 @@ This is a noncommercial, public-good project. Several layers (Carbon Mapper, UNE
 cd pipeline
 uv sync
 uv run matlas probe          # check every data-catalog URL is alive
+uv run matlas auth-check     # verify credentials work (never prints secrets)
 uv run matlas infra          # compile v0 infrastructure layers -> web/public/data/
 
 # web app (Node 22+)
@@ -29,7 +30,7 @@ npm install
 npm run dev                  # http://localhost:3000
 ```
 
-Secrets: copy `.env.example` to `.env` and fill tokens as accounts are created; CI reads the same names from GitHub Actions secrets.
+Secrets: copy `.env.example` to `.env` and fill in as accounts are created — step-by-step instructions per service in [docs/CREDENTIALS.md](docs/CREDENTIALS.md). CI reads the same variable names from GitHub Actions secrets.
 
 ## Repository layout
 
@@ -37,5 +38,5 @@ Secrets: copy `.env.example` to `.env` and fill tokens as accounts are created; 
 pipeline/       Python package `matlas` — fetch, composite, tile, publish stages
 web/            Next.js + MapLibre app (static export)
 data-catalog/   one YAML per data source: URLs, license, cadence, probe rules
-docs/           BUILD_PLAN, DATA_SOURCES, ARCHITECTURE
+docs/           BUILD_PLAN, DATA_SOURCES, ARCHITECTURE, CREDENTIALS
 ```
