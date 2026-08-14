@@ -48,6 +48,58 @@ type Manifest = {
   attribution: string;
 };
 
+const PLUME_COLOR = { light: "#c2255c", dark: "#ff6b9d" };
+
+const PROVIDER_LABEL: Record<string, string> = {
+  "Carbon Mapper": "Carbon Mapper",
+  "NASA EMIT": "EMIT",
+  "UNEP IMEO": "UNEP IMEO",
+  SRON: "SRON",
+};
+
+function plumePopupHtml(props: Record<string, unknown>): string {
+  const rate = props.emission_kg_hr;
+  const unc = props.uncertainty_kg_hr;
+  const when = String(props.datetime_utc ?? "").slice(0, 10);
+  const provider = String(props.provider ?? "");
+  const rows: string[] = [];
+  if (rate != null) {
+    rows.push(
+      `Emission rate: <b>${Number(rate).toLocaleString(undefined, {
+        maximumFractionDigits: 0,
+      })} kg/hr</b>${unc != null ? ` ± ${Number(unc).toFixed(0)}` : ""}`,
+    );
+  }
+  if (props.sector) rows.push(`Sector: <b>${esc(props.sector)}</b>`);
+  if (props.instrument) rows.push(`Instrument: <b>${esc(props.instrument)}</b>`);
+
+  if (props.facility_name) {
+    rows.push(
+      `Nearest facility: <b>${esc(props.facility_name)}</b> ` +
+        `(${esc(String(props.facility_layer ?? "").replace("_", " "))}, ${esc(props.facility_km)} km)`,
+    );
+  } else if (props.nearest_name) {
+    rows.push(
+      `Nearest infrastructure: <b>${esc(props.nearest_name)}</b> ` +
+        `(${esc(String(props.nearest_layer ?? "").replace("pipelines_", "").replace("_", " "))}, ` +
+        `${esc(props.nearest_km)} km)`,
+    );
+  } else {
+    rows.push("No mapped infrastructure within 10 km");
+  }
+  rows.push(
+    `<span style="opacity:.75">Proximity only — what is nearby, not what emitted. The rate is one` +
+      ` instantaneous snapshot and cannot be extrapolated to an annual total.</span>`,
+  );
+  const link = props.provider_url
+    ? `<br/><a href="${esc(props.provider_url)}" target="_blank" rel="noreferrer">View at ${esc(provider)}</a>`
+    : "";
+  return (
+    `<div class="popup-title">${esc(PROVIDER_LABEL[provider] ?? provider)} plume — ${esc(when)}</div>` +
+    `<div class="popup-kv">${rows.join("<br/>")}${link}</div>`
+  );
+}
+
 const POPUP_FIELDS: [string, string][] = [
   ["status", "Status"],
   ["state", "State"],
@@ -103,6 +155,14 @@ export default function MethaneMap() {
   );
   const visibleRef = useRef(visible);
   const [counts, setCounts] = useState<Record<string, number>>({});
+  const [showPlumes, setShowPlumes] = useState(true);
+  const [plumeStatus, setPlumeStatus] = useState<{
+    count: number;
+    near_infrastructure: number;
+    near_facility?: number;
+    high_confidence: number;
+    by_provider: Record<string, string>;
+  } | null>(null);
   const dark =
     typeof window !== "undefined" && window.matchMedia("(prefers-color-scheme: dark)").matches;
 
@@ -156,12 +216,53 @@ export default function MethaneMap() {
         map.on("mouseenter", layer.id, () => (map.getCanvas().style.cursor = "pointer"));
         map.on("mouseleave", layer.id, () => (map.getCanvas().style.cursor = ""));
       }
+      // Plumes sit above everything: they are the only layer that reports a
+      // measured emission rate at a specific place.
+      map.addSource("plumes", { type: "geojson", data: "/data/plumes.geojson" });
+      map.addLayer({
+        id: "plumes",
+        type: "circle",
+        source: "plumes",
+        paint: {
+          "circle-color": dark ? PLUME_COLOR.dark : PLUME_COLOR.light,
+          // Radius carries emission rate where a provider reports one;
+          // detections without a rate still show at a legible base size.
+          "circle-radius": [
+            "interpolate",
+            ["linear"],
+            ["zoom"],
+            3,
+            ["case", ["has", "emission_kg_hr"], ["min", 9, ["+", 3, ["/", ["get", "emission_kg_hr"], 400]]], 4],
+            9,
+            ["case", ["has", "emission_kg_hr"], ["min", 22, ["+", 7, ["/", ["get", "emission_kg_hr"], 150]]], 9],
+          ],
+          "circle-opacity": 0.75,
+          "circle-stroke-width": 1.5,
+          "circle-stroke-color": dark ? "#ffd6e5" : "#ffffff",
+        },
+      });
+      map.on("click", "plumes", (e: MapMouseEvent & { features?: maplibregl.MapGeoJSONFeature[] }) => {
+        const f = e.features?.[0];
+        if (!f) return;
+        new maplibregl.Popup({ closeButton: true, maxWidth: "300px" })
+          .setLngLat(e.lngLat)
+          .setHTML(plumePopupHtml(f.properties ?? {}))
+          .addTo(map);
+      });
+      map.on("mouseenter", "plumes", () => (map.getCanvas().style.cursor = "pointer"));
+      map.on("mouseleave", "plumes", () => (map.getCanvas().style.cursor = ""));
+
       setReady(true);
     });
 
     fetch("/data/status.json")
       .then((r) => (r.ok ? r.json() : null))
       .then((s) => s && setCounts(s.layers ?? {}))
+      .catch(() => {});
+
+    fetch("/data/plumes_status.json")
+      .then((r) => (r.ok ? r.json() : null))
+      .then((s) => s && setPlumeStatus(s))
       .catch(() => {});
 
     fetch("/data/methane/manifest.json")
@@ -315,6 +416,38 @@ export default function MethaneMap() {
             Methane composites are still processing. Infrastructure layers below are live.
           </div>
         )}
+
+        {plumeStatus && plumeStatus.count > 0 ? (
+          <>
+            <div className="section-label">Point sources</div>
+            <label className="layer-toggle">
+              <input
+                type="checkbox"
+                checked={showPlumes}
+                onChange={() => {
+                  const next = !showPlumes;
+                  setShowPlumes(next);
+                  const map = mapRef.current;
+                  if (map?.getLayer("plumes")) {
+                    map.setLayoutProperty("plumes", "visibility", next ? "visible" : "none");
+                  }
+                }}
+              />
+              <span
+                className="swatch round"
+                style={{ background: dark ? PLUME_COLOR.dark : PLUME_COLOR.light }}
+              />
+              Detected plumes
+              <span className="count">{plumeStatus.count}</span>
+            </label>
+            <p className="caveat">
+              {plumeStatus.near_facility ?? plumeStatus.near_infrastructure} of{" "}
+              {plumeStatus.count} sit within 10 km of a mine or gas plant. Circle size shows the
+              measured emission rate — an instantaneous snapshot, not an annual total. Click any
+              plume for details.
+            </p>
+          </>
+        ) : null}
 
         <div className="section-label">Infrastructure</div>
         {LAYERS.map((l) => (

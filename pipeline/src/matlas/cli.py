@@ -65,6 +65,22 @@ def main(argv: list[str] | None = None) -> None:
     )
     p_render.add_argument("--kind", choices=("week", "month"), default="month")
 
+    p_plumes = sub.add_parser(
+        "plumes", help="fetch point-source plume detections from every configured provider"
+    )
+    p_plumes.add_argument(
+        "--out",
+        type=Path,
+        default=REPO_ROOT / "web" / "public" / "data" / "plumes.geojson",
+        help="output GeoJSON",
+    )
+    p_plumes.add_argument(
+        "--data",
+        type=Path,
+        default=REPO_ROOT / "web" / "public" / "data",
+        help="dir holding the infrastructure layers used for association",
+    )
+
     p_clim = sub.add_parser(
         "climatology",
         help="average every composite into a long-term enhancement layer (low-noise)",
@@ -121,6 +137,10 @@ def main(argv: list[str] | None = None) -> None:
         from . import render
 
         render.run(args.rasters, args.out, kind=args.kind)
+    elif args.command == "plumes":
+        from . import plumes
+
+        plumes.run(args.out, args.data)
     elif args.command == "climatology":
         from . import climatology
 

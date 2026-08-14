@@ -69,6 +69,30 @@ Weekly composites give a median of **1 observation per cell**; a single retrieva
 | Monthly | 6.5 ppb sd, p99 14.4 ppb |
 | 20-month average | **0.93 ppb** typical standard error |
 
+## 5. Phase 2 result: the plume layer works, and it cross-validates the above
+
+Adding point-source detections (UNEP IMEO/MARS, NASA EMIT, SRON) produced **499 plumes** over the region, of which **389 sit within 10 km of a mapped mine or gas plant** and 74 within 1 km. **89% are coal-sector.**
+
+| Region | Plumes |
+|---|---|
+| **Bowen Basin, QLD** | **227** |
+| **Hunter Valley, NSW** | **134** |
+| Sydney Basin, NSW | 93 |
+| Surat Basin, QLD | 5 |
+| Cooper Basin, SA/QLD | 2 |
+| **NW Shelf / Pilbara, WA** | **1** |
+| **Papua New Guinea** | **0** |
+
+Most-detected facilities, all underground coal mines: Grosvenor (33), Mandalong (30), Ashton (29), Aquila-Capcoal (27), Tower (25), Tahmoor (24), Appin (23), Kestrel (14).
+
+**This independently confirms the TROPOMI diagnosis.** The NW Shelf, where TROPOMI's strongest and most persistent "hotspots" clustered, yields **one** plume — the enhancement there was artifact. The Hunter Valley, which TROPOMI's coastal buffer eliminated entirely (1 interior cell), yields **134** plumes. Two independent instruments disagreeing that sharply is exactly what a systematic retrieval bias looks like, and the plume data points to the geography the literature expects: gassy underground coal.
+
+**PNG remains at zero.** Not a coverage artifact this time — the plume providers simply have no published detections there. PNG's methane story currently rests on infrastructure mapping alone.
+
+### Rates must never be summed
+
+Each plume carries an instantaneous rate in kg/hr from a single overpass. Adding them across 499 detections spanning three years yields ~3.4 million kg/hr, which annualises to far more than Australia's entire methane inventory — it is meaningless. Detections sample scattered moments and are biased toward large, detectable events. The pipeline records this caveat in `plumes_status.json` and the UI repeats it on every popup.
+
 ## What this means for the build
 
 1. **TROPOMI is regional context, not detection.** Ship it as concentration and long-term enhancement, with the surface-bias caveat visible in the UI, not buried in a methodology page.
