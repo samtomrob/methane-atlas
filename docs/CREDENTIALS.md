@@ -62,32 +62,47 @@ Cross-host redirects on downloads drop the auth header, so the pipeline follows 
 
 ## Earth Engine
 
-An "Earth Engine API key" from the Cloud console is **not** sufficient for automated use — an API key carries no identity, and Earth Engine authorizes a *principal* with IAM roles. Non-interactive use needs a **service account with a JSON key**. No billing required.
+**Earth Engine runs exactly once in this project** — to backfill methane history from 2019 to now. Ongoing weekly updates come from CDSE, so Earth Engine never runs in CI. That means the simple interactive login is enough; a service account is optional.
 
-1. **Register a project** — <https://console.cloud.google.com/earth-engine>
-2. **Enable the API** — <https://console.cloud.google.com/apis/library/earthengine.googleapis.com> → **ENABLE**
-3. **Register as noncommercial** — `https://code.earthengine.google.com/register?project=YOUR-PROJECT-ID`
-4. **Complete the eligibility questionnaire** — <https://console.cloud.google.com/earth-engine/configuration> — mandatory for all noncommercial projects since September 2025; Earth Engine calls fail without it
-5. **Create a service account** — <https://console.cloud.google.com/iam-admin/serviceaccounts/create>, then grant it **both** roles:
-   - **Earth Engine Resource Writer** (`roles/earthengine.writer`) — Viewer is not enough; Writer is what permits computations and exports
-   - **Service Usage Consumer** (`roles/serviceusage.serviceUsageConsumer`) — without this, `ee.Initialize(project=…)` fails outright
-6. **Download the key** — open the service account → **Keys** → **Add key** → **Create new key** → **JSON**. Save it as `secrets/gee-service-account.json` (that folder is gitignored).
+There is deliberately **no API-key field**. An Earth Engine API key can't drive the Python API: an API key carries no identity, and Earth Engine authorizes a *principal* (an account or service account) holding IAM roles. Both options below authenticate an identity.
 
-Then set `GEE_PROJECT_ID` to your project ID. Earth Engine registration is **per Cloud project**, not per service account — there's no separate per-account signup any more; every service account in a registered project with the right roles inherits access.
+The only required setting either way is `GEE_PROJECT_ID` — and it must be **the Cloud project your Earth Engine access is attached to**, because compute allowances and registration belong to the *project*, not to a key or a person. If you have a research allocation, use that project's ID or the allowance won't apply.
 
-### Compute quota — the real constraint
+### Option A — interactive login (recommended)
 
-Since April 2026, noncommercial projects carry a monthly compute budget:
+Set `GEE_PROJECT_ID`, leave `GEE_SERVICE_ACCOUNT_JSON_PATH` blank, then:
+
+```bash
+cd pipeline && uv run matlas gee-login
+```
+
+A browser opens, you approve once with the Google account that holds your Earth Engine access, and the refresh token is stored in your user config directory — outside the repo. Sufficient for the backfill.
+
+### Option B — service account (only if you want it unattended)
+
+Needed only to run Earth Engine from CI or a scheduled job. If you already have a key from a research project, save it as `secrets/gee-service-account.json` and point `GEE_SERVICE_ACCOUNT_JSON_PATH` at it. To create one:
+
+1. <https://console.cloud.google.com/iam-admin/serviceaccounts/create>
+2. Grant it **both** roles — **Earth Engine Resource Writer** (`roles/earthengine.writer`; Viewer is not enough) and **Service Usage Consumer** (`roles/serviceusage.serviceUsageConsumer`, without which `ee.Initialize(project=…)` fails outright)
+3. **Keys** → **Add key** → **Create new key** → **JSON**
+
+Registration is per Cloud project — there's no per-service-account signup any more; every service account in a registered project with the right roles inherits access.
+
+### First-time project setup
+
+If the project isn't set up for Earth Engine yet: register it at <https://console.cloud.google.com/earth-engine>, enable the API at <https://console.cloud.google.com/apis/library/earthengine.googleapis.com>, register its use type at `https://code.earthengine.google.com/register?project=YOUR-PROJECT-ID`, and complete the eligibility questionnaire at <https://console.cloud.google.com/earth-engine/configuration> (mandatory since September 2025 — calls fail without it). A project with an existing research allocation will already have all of this done.
+
+### Compute quota
+
+Monthly compute budget by tier, since April 2026:
 
 | Tier | Monthly quota | Requirement |
 |---|---|---|
-| **Community** (default) | **150 EECU-hours** | verified noncommercial project |
+| Community (default) | 150 EECU-hours | verified noncommercial project |
 | Contributor | 1,000 EECU-hours | needs an active billing account |
-| Partner | 100,000 EECU-hours | separate application |
+| Partner / research allocation | up to 100,000 EECU-hours | separate application |
 
-Check or change tier at <https://console.cloud.google.com/earth-engine/configuration/manage-tier>. Also roughly **2 concurrent batch tasks** and 250 GB of asset storage.
-
-150 EECU-hours is the ceiling that shapes the backfill design: the job is built to be **resumable and chunked by year**, so if a month's budget runs out it picks up where it stopped rather than restarting.
+Confirm which tier the project is on at <https://console.cloud.google.com/earth-engine/configuration/manage-tier>. The backfill is chunked by year and resumable regardless, so a quota stall costs nothing but time — but with a research allocation the 2019→now backfill should complete in a single pass.
 
 ### Why we avoid batch exports entirely
 

@@ -32,7 +32,9 @@ class Result:
 
     def line(self) -> str:
         icon = {OK: "ok    ", FAIL: "FAIL  ", SKIP: "skip  "}[self.status]
-        return f"{icon} {self.service:24s} {self.detail}"
+        # Provider errors often span lines; keep one service per line.
+        detail = " ".join(self.detail.split())
+        return f"{icon} {self.service:24s} {detail}"
 
 
 def cdse_token(client: httpx.Client) -> tuple[str | None, str]:
@@ -183,37 +185,46 @@ def check_cdse_s3() -> Result:
 def check_gee() -> Result:
     service = "Earth Engine"
     if not config.GEE.ready:
-        return Result(service, SKIP, f"missing {', '.join(config.GEE.missing)}")
-
-    key_path = config.gee_key_path()
-    if key_path is None or not key_path.exists():
-        return Result(service, FAIL, f"key file not found at {key_path}")
-
-    import json
-
-    try:
-        key = json.loads(key_path.read_text(encoding="utf-8"))
-    except (ValueError, OSError) as e:
-        return Result(service, FAIL, f"key file unreadable: {type(e).__name__}")
-    email = key.get("client_email")
-    if key.get("type") != "service_account" or not email:
-        return Result(
-            service,
-            FAIL,
-            "key file is not a service-account JSON (needs type=service_account + client_email)",
-        )
+        return Result(service, SKIP, "missing GEE_PROJECT_ID")
 
     try:
         import ee
     except ImportError:
-        return Result(service, SKIP, f"key looks valid ({email}); install earthengine-api to fully verify")
+        return Result(service, SKIP, "earthengine-api not installed")
 
     project = config.get("GEE_PROJECT_ID")
-    try:
-        creds = ee.ServiceAccountCredentials(email, str(key_path))
-        ee.Initialize(credentials=creds, project=project)
-    except Exception as e:  # ee raises bare Exception subclasses liberally
-        return Result(service, FAIL, f"initialize failed: {str(e)[:160]}")
+    key_path = config.gee_key_path()
+    use_service_account = key_path is not None and key_path.exists()
+
+    if use_service_account:
+        import json
+
+        try:
+            key = json.loads(key_path.read_text(encoding="utf-8"))
+        except (ValueError, OSError) as e:
+            return Result(service, FAIL, f"key file unreadable: {type(e).__name__}")
+        email = key.get("client_email")
+        if key.get("type") != "service_account" or not email:
+            return Result(
+                service,
+                FAIL,
+                "key file is not a service-account JSON (needs type=service_account + client_email)",
+            )
+        mode = f"service account {email.split('@')[0]}"
+        try:
+            creds = ee.ServiceAccountCredentials(email, str(key_path))
+            ee.Initialize(credentials=creds, project=project)
+        except Exception as e:  # ee raises bare Exception subclasses liberally
+            return Result(service, FAIL, f"initialize failed as {mode}: {str(e)[:150]}")
+    else:
+        # Credentials stored by `matlas gee-login` / `earthengine authenticate`.
+        mode = "stored login"
+        try:
+            ee.Initialize(project=project)
+        except ee.EEException:
+            return Result(service, FAIL, "not signed in — run `matlas gee-login`")
+        except Exception as e:
+            return Result(service, FAIL, f"initialize failed: {str(e)[:120]}")
 
     try:
         n = (
@@ -223,8 +234,34 @@ def check_gee() -> Result:
             .getInfo()
         )
     except Exception as e:
-        return Result(service, FAIL, f"initialized, but S5P collection query failed: {str(e)[:160]}")
-    return Result(service, OK, f"authorized on project {project}; {n} S5P CH4 images in Jul 2026")
+        return Result(service, FAIL, f"initialized ({mode}), but S5P query failed: {str(e)[:140]}")
+    return Result(
+        service, OK, f"{mode} on project {project}; {n} S5P CH4 images found for Jul 2026"
+    )
+
+
+def gee_login() -> int:
+    """Interactive Earth Engine sign-in. Opens a browser, stores a refresh token
+    under the user's config dir — enough for the one-time backfill run."""
+    config.load()
+    try:
+        import ee
+    except ImportError:
+        print("earthengine-api is not installed; run `uv sync` in pipeline/ first.")
+        return 1
+    project = config.get("GEE_PROJECT_ID")
+    if not project:
+        print("Set GEE_PROJECT_ID in .env first (your Earth Engine Cloud project ID).")
+        return 1
+    print(f"Signing in to Earth Engine for project {project} — a browser window will open.")
+    try:
+        ee.Authenticate()
+        ee.Initialize(project=project)
+    except Exception as e:
+        print(f"Sign-in failed: {e}")
+        return 1
+    print("Signed in. Verify with: matlas auth-check")
+    return 0
 
 
 def _check_bearer(service: str, cred: config.Credential, url: str, header: dict[str, str]) -> Result:

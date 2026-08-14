@@ -29,6 +29,11 @@ def main(argv: list[str] | None = None) -> None:
         help="verify configured credentials actually work (never prints secret values)",
     )
 
+    sub.add_parser(
+        "gee-login",
+        help="sign in to Earth Engine interactively (alternative to a service-account key)",
+    )
+
     args = parser.parse_args(argv)
 
     if args.command == "probe":
@@ -39,6 +44,10 @@ def main(argv: list[str] | None = None) -> None:
         from . import auth
 
         sys.exit(auth.run())
+    elif args.command == "gee-login":
+        from . import auth
+
+        sys.exit(auth.gee_login())
     elif args.command == "infra":
         from . import infra
 

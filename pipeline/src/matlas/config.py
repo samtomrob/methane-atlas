@@ -58,7 +58,11 @@ class Credential:
 CDSE_OAUTH = Credential("CDSE (OAuth client)", ("CDSE_CLIENT_ID", "CDSE_CLIENT_SECRET"), "docs/CREDENTIALS.md#cdse")
 CDSE_PASSWORD = Credential("CDSE (account password)", ("CDSE_USERNAME", "CDSE_PASSWORD"), "docs/CREDENTIALS.md#cdse")
 CDSE_S3 = Credential("CDSE (S3 keys)", ("CDSE_S3_ACCESS_KEY", "CDSE_S3_SECRET_KEY"), "docs/CREDENTIALS.md#cdse")
-GEE = Credential("Earth Engine", ("GEE_SERVICE_ACCOUNT_JSON_PATH", "GEE_PROJECT_ID"), "docs/CREDENTIALS.md#earth-engine")
+# Earth Engine needs only the project ID. Auth is either a service-account key
+# file (set GEE_SERVICE_ACCOUNT_JSON_PATH) or the credentials stored locally by
+# `matlas gee-login`. EE runs only for the one-time backfill, never in CI, so
+# the interactive route is sufficient.
+GEE = Credential("Earth Engine", ("GEE_PROJECT_ID",), "docs/CREDENTIALS.md#earth-engine")
 EARTHDATA = Credential("NASA Earthdata", ("EARTHDATA_TOKEN",), "docs/CREDENTIALS.md#earthdata")
 CARBON_MAPPER = Credential("Carbon Mapper", ("CARBON_MAPPER_TOKEN",), "docs/CREDENTIALS.md#carbon-mapper")
 GFW = Credential("Global Forest Watch", ("GFW_API_KEY",), "docs/CREDENTIALS.md#gfw")
