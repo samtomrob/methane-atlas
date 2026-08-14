@@ -60,6 +60,14 @@ PREFERRED_VARS = (
     "methane_mixing_ratio",
 )
 
+# Over water TROPOMI retrieves methane only in sun-glint geometry, which is far
+# noisier: measured on a real granule, water retrievals scatter with a standard
+# deviation of ~60 ppb against ~9 ppb over land. qa >= 0.5 already removes most
+# of them (0.6% survive), but with only a handful of observations per cell a
+# single glint pixel visibly skews the mean, so exclude them explicitly.
+# Offshore infrastructure is covered by the point-source plume layers instead.
+MIN_LAND_FRACTION = 0.5
+
 
 @dataclass(frozen=True)
 class Granule:
@@ -157,6 +165,9 @@ def read_granule(path: Path) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
         lon = np.ravel(product.variables["longitude"][:])
         qa = np.ravel(product.variables["qa_value"][:])
         val = np.ravel(product.variables[var_name][:])
+        land = np.ravel(
+            product.groups["SUPPORT_DATA"].groups["INPUT_DATA"].variables["land_fraction"][:]
+        )
 
     # netCDF4 hands back masked arrays; treat masked entries as invalid.
     def unmask(a: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
@@ -168,16 +179,19 @@ def read_granule(path: Path) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
     lon, m2 = unmask(lon)
     qa, m3 = unmask(qa)
     val, m4 = unmask(val)
+    land, m5 = unmask(land)
 
     keep = (
         m1
         & m2
         & m3
         & m4
+        & m5
         & np.isfinite(lat)
         & np.isfinite(lon)
         & np.isfinite(val)
         & (qa >= QA_MIN)
+        & (land >= MIN_LAND_FRACTION)
         & (lon >= LON_MIN)
         & (lon < LON_MAX)
         & (lat >= LAT_MIN)
@@ -356,6 +370,7 @@ def composite_period(
         "obs_total": int(count.sum()),
         "min_obs_for_anomaly": MIN_OBS_FOR_ANOMALY,
         "qa_min": QA_MIN,
+        "min_land_fraction": MIN_LAND_FRACTION,
         "file": str(out_path.relative_to(out_dir)).replace("\\", "/"),
     }
     print(

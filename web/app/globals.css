@@ -91,6 +91,69 @@ body {
 }
 .panel footer a { color: var(--accent); text-decoration: none; }
 
+.section-label {
+  font-size: 0.68rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin: 12px 0 4px;
+  font-weight: 600;
+}
+.section-label:first-of-type { margin-top: 4px; }
+
+.seg {
+  display: flex;
+  gap: 4px;
+  margin: 6px 0 8px;
+}
+.seg button {
+  flex: 1;
+  font: inherit;
+  font-size: 0.78rem;
+  padding: 5px 6px;
+  border: 1px solid var(--line);
+  border-radius: 5px;
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+}
+.seg button.on {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+  font-weight: 600;
+}
+.seg button:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+
+.legend { margin: 8px 0; }
+.legend .bar {
+  height: 8px;
+  border-radius: 2px;
+  border: 1px solid var(--line);
+}
+.legend .ticks {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.66rem;
+  color: var(--muted);
+  margin-top: 3px;
+  font-variant-numeric: tabular-nums;
+}
+
+.slider {
+  width: 100%;
+  margin: 8px 0 2px;
+  accent-color: var(--accent);
+}
+.period {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  font-size: 0.74rem;
+  color: var(--muted);
+}
+.period b { color: var(--ink); font-size: 0.86rem; font-variant-numeric: tabular-nums; }
+
 .maplibregl-popup-content {
   background: var(--surface) !important;
   color: var(--ink) !important;

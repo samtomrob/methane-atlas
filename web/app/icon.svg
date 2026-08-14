@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <rect width="32" height="32" rx="7" fill="#0e1519"/>
+  <!-- plume dispersing from a point source -->
+  <circle cx="11" cy="22" r="3" fill="#ff7a2f"/>
+  <path d="M13 20c4-1 7-3 9-7" stroke="#ff7a2f" stroke-width="2.6" stroke-linecap="round" opacity="0.85"/>
+  <path d="M13.5 23.5c5 0 9-1.5 12-5" stroke="#ff7a2f" stroke-width="2.2" stroke-linecap="round" opacity="0.5"/>
+  <path d="M14 17c2.5-1.5 4-3.5 5-6" stroke="#fec287" stroke-width="2" stroke-linecap="round" opacity="0.6"/>
+</svg>

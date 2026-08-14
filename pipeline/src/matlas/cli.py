@@ -51,6 +51,20 @@ def main(argv: list[str] | None = None) -> None:
         "--out", type=Path, default=REPO_ROOT / "data" / "rasters", help="output dir"
     )
 
+    p_render = sub.add_parser(
+        "render", help="render methane composites to PNG overlays for the web app"
+    )
+    p_render.add_argument(
+        "--rasters", type=Path, default=REPO_ROOT / "data" / "rasters", help="composite dir"
+    )
+    p_render.add_argument(
+        "--out",
+        type=Path,
+        default=REPO_ROOT / "web" / "public" / "data" / "methane",
+        help="output dir",
+    )
+    p_render.add_argument("--kind", choices=("week", "month"), default="month")
+
     args = parser.parse_args(argv)
 
     if args.command == "probe":
@@ -73,6 +87,10 @@ def main(argv: list[str] | None = None) -> None:
         start = dt.date.fromisoformat(args.start)
         end = dt.date.fromisoformat(args.end) if args.end else dt.date.today()
         tropomi.run(args.out, start, end, kind=args.kind, limit=args.limit)
+    elif args.command == "render":
+        from . import render
+
+        render.run(args.rasters, args.out, kind=args.kind)
     elif args.command == "infra":
         from . import infra
 
