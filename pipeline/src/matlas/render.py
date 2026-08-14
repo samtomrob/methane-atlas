@@ -98,10 +98,18 @@ def colorize(
         limit = max(abs(vmin), abs(vmax)) or 1.0
         norm = np.clip((data + limit) / (2 * limit), 0.0, 1.0)
         rgb = _ramp(np.where(valid, norm, 0.5), DIVERGING)
-        # Fade out small deviations so the eye goes to real enhancement rather
-        # than to background noise.
-        strength = np.clip(np.abs(np.where(valid, data, 0.0)) / (0.35 * limit), 0.0, 1.0)
-        alpha = 60 + 195 * strength
+        # Opacity carries magnitude: a cell sitting at the background is fully
+        # transparent, so the basemap stays readable and the eye is drawn only
+        # to genuine deviation rather than to a wash of near-zero noise.
+        #
+        # The ramp runs across the *whole* scale (not a fraction of it) and is
+        # deliberately super-linear. Residual per-cell scatter sits at roughly a
+        # quarter of the p98 limit, so a linear ramp would render noise at ~25%
+        # opacity everywhere — a visible haze over the entire continent. At
+        # exponent 1.6 that same scatter lands near 10% while real enhancement
+        # at the top of the scale still reads at full strength.
+        strength = np.clip(np.abs(np.where(valid, data, 0.0)) / limit, 0.0, 1.0)
+        alpha = 245 * np.power(strength, 1.6)
     else:
         span = (vmax - vmin) or 1.0
         norm = np.clip((data - vmin) / span, 0.0, 1.0)

@@ -27,5 +27,7 @@ jobs:
       - uses: astral-sh/setup-uv@v4
       - run: uv sync
         working-directory: pipeline
-      - run: uv run python -c "import matlas.infra, matlas.probe, matlas.geo"
+      - run: uv run python -c "import matlas.infra, matlas.probe, matlas.geo, matlas.tropomi, matlas.render, matlas.auth"
+        working-directory: pipeline
+      - run: uv run python tests/test_render.py
         working-directory: pipeline
