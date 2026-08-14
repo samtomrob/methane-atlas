@@ -39,13 +39,13 @@ No database, no tile server, no API server for the MVP. Everything the browser n
 
 ### 3.1 Concentration rasters (TROPOMI XCH4)
 
-- **Input**: Sentinel-5P L2 `CH4` (bias-corrected XCH4, qa filtering ≥ 0.5). Both routes are built (D-3 resolved: EE for backfill, CDSE for ongoing):
-  - **Route A — Google Earth Engine** `COPERNICUS/S5P/OFFL/L3_CH4`, already qa-filtered and gridded. Used for the 2019→now backfill.
-    - **Pull synchronously via `getDownloadURL`, not batch `Export`.** The ROI at 0.05° is ~1040×920 px (~4 MB/band), comfortably inside the request-size limit. This sidesteps both export destinations: `toCloudStorage` requires enabling GCP billing, and `toDrive` under a service account writes to the *service account's* invisible Drive namespace. Batch export remains the fallback if a product ever exceeds the limit.
-    - **Compute budget is the binding constraint**: noncommercial Community tier = **150 EECU-hours/month** (since Apr 2026). The backfill is therefore **chunked by year and resumable** — each period's output is immutable, so a quota stall resumes rather than restarts. `status.json` records the last completed period.
-  - **Route B — Copernicus Data Space Ecosystem** for the ongoing weekly job and anything EE lacks: query granules via OData/STAC, download L2 NetCDF, grid with xarray (0.05° target, qa-masked binning), composite.
-    - **Search over OData, download over S3** (CDSE's own recommendation): OData results expose an `S3Path` per product; bytes come from `eodata` bucket at `https://eodata.dataspace.copernicus.eu`.
-    - Hard limits: **4 concurrent S3 connections**, 2000 requests/min, 12 TB per rolling 30 days, and a **10-minute access token** (refresh mid-run on long jobs). Cross-host download redirects drop the auth header, so redirects are followed manually with the token re-attached per hop.
+- **Input**: Sentinel-5P L2 `CH4` (bias-corrected XCH4, qa filtering ≥ 0.5), from **CDSE only** — one source for both backfill and ongoing updates (D-3, revised).
+- **Measured volume** (OData query, 2026-08-14): **25 granules/week** intersect the ROI at **~60 MB each** = 1.5 GB/week; **571 GB** for the full 2019-02→now backfill. That is <5% of the 12 TB rolling-30-day allowance, so the one-time backfill is a single overnight run. Granules are processed and discarded — only composites persist (~2 GB).
+- **Access pattern — search over OData, download over S3** (CDSE's own recommendation): OData results carry an `S3Path` per product; bytes come from the `eodata` bucket at `https://eodata.dataspace.copernicus.eu` (region `default`).
+- **Hard limits to respect**: **4 concurrent S3 connections** (the parallelism cap), 2000 requests/min, 12 TB per rolling 30 days, and a **10-minute access token** — long runs refresh mid-flight. Cross-host download redirects drop the auth header, so redirects are followed manually with the token re-attached each hop.
+- **Gridding**: xarray, 0.05° target grid, qa_value ≥ 0.5 mask, area-weighted binning of L2 pixels. Working from L2 rather than a pre-binned L3 is what lets us set the quality threshold, compute per-cell observation counts, and derive uncertainty honestly.
+- **Backfill execution**: chunked by year, resumable, idempotent per period (`status.json` records the last completed period), so an interrupted run resumes rather than restarts.
+- **Earth Engine: dropped.** It would have saved a few hours of one-time download at the cost of a second account, an OAuth service-account flow, a monthly compute quota, and a noncommercial-only platform licence on an otherwise commercially-usable data path. `matlas gee-login` and the EE code path remain in the tree as an optional shortcut, unused by default.
 - **Products** (per period: ISO week and calendar month):
   - `xch4_mean` — mean column XCH4 (ppb)
   - `xch4_anom` — anomaly vs. rolling 90-day regional median (ppb) — this is the "where is it elevated" layer

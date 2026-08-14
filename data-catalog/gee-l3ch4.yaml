@@ -3,14 +3,19 @@ name: Google Earth Engine — COPERNICUS/S5P/OFFL/L3_CH4
 category: methane-concentration
 license: Copernicus data terms; EE platform noncommercial tier (per D-7 commitment)
 attribution: "Contains modified Copernicus Sentinel data (2026); processed via Google Earth Engine"
-auth: GEE noncommercial registration + service account
+auth: GEE noncommercial registration + interactive login or service account
 cadence: ~3-day update lag; 2019-02-08 → present
 verified: 2026-08-14
+status: NOT USED — retained as an optional shortcut only
 urls:
   - url: https://developers.google.com/earth-engine/datasets/catalog/COPERNICUS_S5P_OFFL_L3_CH4
     expect: [200]
-    requires: GEE_SERVICE_ACCOUNT_JSON_PATH
+    requires: GEE_PROJECT_ID
 notes: >
-  Backfill route (D-3): export weekly/monthly ROI means 2019→now as GeoTIFF in
-  one batch job. Band CH4_column_volume_mixing_ratio_dry_air_bias_corrected.
-  Ongoing updates stay on CDSE to avoid platform dependence.
+  DROPPED from the pipeline 2026-08-14 (D-3 revised). Measured the CDSE-only
+  backfill at 571 GB for 2019→now over the ROI — under 5% of the 12 TB
+  rolling-30-day allowance, ~one overnight run. EE would have added a second
+  account, an OAuth flow, a monthly EECU quota and a noncommercial-only
+  platform licence to save a few hours of one-time download. Working from raw
+  L2 via CDSE also lets us set qa thresholds and gridding ourselves rather
+  than inheriting this pre-binned L3. Code path kept behind `matlas gee-login`.

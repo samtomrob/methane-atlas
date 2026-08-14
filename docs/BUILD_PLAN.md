@@ -106,7 +106,7 @@ Monitoring/alerting on pipeline failures; methodology page finalized; mobile lay
 |---|---|---|
 | D-1 | Hosting budget | **Cloudflare R2** (~$0–1/mo; owner to create account + bucket) |
 | D-2 | Public or private v1 | **Public GitHub repo from day one** (owner-approved publishing) |
-| D-3 | TROPOMI route | **Earth Engine (noncommercial) for 2019→now backfill + CDSE for ongoing weekly** |
+| D-3 | TROPOMI route | ~~Earth Engine for backfill + CDSE ongoing~~ → **REVISED 2026-08-14: CDSE for everything; Earth Engine dropped.** Measured the full 2019→now backfill for the ROI at **571 GB** (25 granules/week × ~60 MB, 392 weeks) — under 5% of CDSE's 12 TB rolling-30-day allowance and roughly one overnight run. Earth Engine added a second account, an OAuth flow, a compute quota and a noncommercial-only platform licence to save a few hours of one-time download. Working from raw L2 also lets us control qa filtering and gridding rather than inheriting Google's pre-binned L3. |
 | D-4 | MVP temporal grain | **Weekly + monthly composites** |
 | D-5 | History depth | **2019 → now** |
 | D-6 | Name & domain | **"Methane Atlas" as working name**; final name/domain still open (differentiate from openmethane.org) — non-blocking |

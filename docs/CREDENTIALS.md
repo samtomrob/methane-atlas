@@ -12,12 +12,12 @@ It tests each credential against the real service and prints `ok` / `FAIL` / `sk
 
 | Service | Needed for | Phase | Billing? |
 |---|---|---|---|
-| Copernicus Data Space | Sentinel-5P TROPOMI methane | 1 | no |
-| Google Earth Engine | 2019→now methane backfill | 1 | no |
+| **Copernicus Data Space** | **all Sentinel-5P methane, backfill + ongoing** | **1 — required** | no |
 | NASA Earthdata | EMIT plume detections | 2 | no |
 | Carbon Mapper | Tanager/aircraft plumes | 2 | no |
 | Global Forest Watch | deforestation + carbon | 4 | no |
 | Cloudflare R2 | hosting raster tiles | 1 (late) | card on file |
+| ~~Google Earth Engine~~ | dropped — see below | — | — |
 
 ---
 
@@ -60,49 +60,19 @@ Cross-host redirects on downloads drop the auth header, so the pipeline follows 
 
 ---
 
-## Earth Engine
+## Earth Engine — dropped, nothing to configure
 
-**Earth Engine runs exactly once in this project** — to backfill methane history from 2019 to now. Ongoing weekly updates come from CDSE, so Earth Engine never runs in CI. That means the simple interactive login is enough; a service account is optional.
+**You do not need an Earth Engine credential.** Leave `GEE_PROJECT_ID` and `GEE_SERVICE_ACCOUNT_JSON_PATH` blank.
 
-There is deliberately **no API-key field**. An Earth Engine API key can't drive the Python API: an API key carries no identity, and Earth Engine authorizes a *principal* (an account or service account) holding IAM roles. Both options below authenticate an identity.
+Earth Engine was originally in the plan purely as a shortcut for the 2019→now backfill. Measuring the alternative removed the reason: the full backfill from CDSE is **571 GB** (25 granules/week intersecting the region × ~60 MB, over 392 weeks) — under 5% of CDSE's 12 TB rolling-30-day allowance and roughly one overnight run. Earth Engine would have cost a second account, an OAuth service-account flow, a monthly compute quota, and a noncommercial-only platform licence, to save a few hours of one-time download.
 
-The only required setting either way is `GEE_PROJECT_ID` — and it must be **the Cloud project your Earth Engine access is attached to**, because compute allowances and registration belong to the *project*, not to a key or a person. If you have a research allocation, use that project's ID or the allowance won't apply.
+Dropping it also improves the project's position in two ways: CDSE's Copernicus terms permit commercial use where Earth Engine's free tier does not, and working from raw L2 measurements rather than Google's pre-binned L3 grid means we set the quality threshold and gridding ourselves.
 
-### Option A — interactive login (recommended)
+### On API keys, for the record
 
-Set `GEE_PROJECT_ID`, leave `GEE_SERVICE_ACCOUNT_JSON_PATH` blank, then:
+An Earth Engine API key cannot drive the API — not via the Python library and not via REST. Google's [auth documentation](https://developers.google.com/earth-engine/guides/auth) lists user credentials, service accounts, and OAuth flows; API keys are not among the supported methods, because Earth Engine authorizes an *identity* holding IAM roles rather than a bare key string. (Note that <https://developers.google.com/earth-engine/apidocs> is the reference for the `ee.*` functions — the operations catalog — not an authentication or REST endpoint guide.)
 
-```bash
-cd pipeline && uv run matlas gee-login
-```
-
-A browser opens, you approve once with the Google account that holds your Earth Engine access, and the refresh token is stored in your user config directory — outside the repo. Sufficient for the backfill.
-
-### Option B — service account (only if you want it unattended)
-
-Needed only to run Earth Engine from CI or a scheduled job. If you already have a key from a research project, save it as `secrets/gee-service-account.json` and point `GEE_SERVICE_ACCOUNT_JSON_PATH` at it. To create one:
-
-1. <https://console.cloud.google.com/iam-admin/serviceaccounts/create>
-2. Grant it **both** roles — **Earth Engine Resource Writer** (`roles/earthengine.writer`; Viewer is not enough) and **Service Usage Consumer** (`roles/serviceusage.serviceUsageConsumer`, without which `ee.Initialize(project=…)` fails outright)
-3. **Keys** → **Add key** → **Create new key** → **JSON**
-
-Registration is per Cloud project — there's no per-service-account signup any more; every service account in a registered project with the right roles inherits access.
-
-### First-time project setup
-
-If the project isn't set up for Earth Engine yet: register it at <https://console.cloud.google.com/earth-engine>, enable the API at <https://console.cloud.google.com/apis/library/earthengine.googleapis.com>, register its use type at `https://code.earthengine.google.com/register?project=YOUR-PROJECT-ID`, and complete the eligibility questionnaire at <https://console.cloud.google.com/earth-engine/configuration> (mandatory since September 2025 — calls fail without it). A project with an existing research allocation will already have all of this done.
-
-### Compute quota
-
-Monthly compute budget by tier, since April 2026:
-
-| Tier | Monthly quota | Requirement |
-|---|---|---|
-| Community (default) | 150 EECU-hours | verified noncommercial project |
-| Contributor | 1,000 EECU-hours | needs an active billing account |
-| Partner / research allocation | up to 100,000 EECU-hours | separate application |
-
-Confirm which tier the project is on at <https://console.cloud.google.com/earth-engine/configuration/manage-tier>. The backfill is chunked by year and resumable regardless, so a quota stall costs nothing but time — but with a research allocation the 2019→now backfill should complete in a single pass.
+If you ever want the shortcut anyway, `matlas gee-login` does an interactive browser sign-in and needs only `GEE_PROJECT_ID` set to the Cloud project your access is attached to (allowances belong to the project, not the key or the person). A service-account JSON at `secrets/gee-service-account.json` also works, needing both `roles/earthengine.writer` and `roles/serviceusage.serviceUsageConsumer`. Neither is used by default.
 
 ### Why we avoid batch exports entirely
 
