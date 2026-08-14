@@ -66,7 +66,17 @@ PREFERRED_VARS = (
 # of them (0.6% survive), but with only a handful of observations per cell a
 # single glint pixel visibly skews the mean, so exclude them explicitly.
 # Offshore infrastructure is covered by the point-source plume layers instead.
-MIN_LAND_FRACTION = 0.5
+#
+# Discriminate land using bit 0 of surface_classification (even = land, odd =
+# water). That variable is present in every processor version, whereas
+# land_fraction only appears from processor 02.09 onward — relying on it broke
+# every pre-2026 granule. Verified on a granule carrying both: bit 0 == 0 agrees
+# with land_fraction >= 0.5 for 100.00% of pixels.
+LAND_BIT_MASK = 0x01
+
+# A granule failing to parse is a bug, not weather. Above this fraction the
+# period is reported as suspect rather than silently producing a thin composite.
+MAX_ACCEPTABLE_SKIP_RATE = 0.2
 
 
 @dataclass(frozen=True)
@@ -165,8 +175,10 @@ def read_granule(path: Path) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
         lon = np.ravel(product.variables["longitude"][:])
         qa = np.ravel(product.variables["qa_value"][:])
         val = np.ravel(product.variables[var_name][:])
-        land = np.ravel(
-            product.groups["SUPPORT_DATA"].groups["INPUT_DATA"].variables["land_fraction"][:]
+        surface = np.ravel(
+            product.groups["SUPPORT_DATA"]
+            .groups["INPUT_DATA"]
+            .variables["surface_classification"][:]
         )
 
     # netCDF4 hands back masked arrays; treat masked entries as invalid.
@@ -179,7 +191,9 @@ def read_granule(path: Path) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
     lon, m2 = unmask(lon)
     qa, m3 = unmask(qa)
     val, m4 = unmask(val)
-    land, m5 = unmask(land)
+    surface, m5 = unmask(surface)
+
+    is_land = (surface.astype("int64") & LAND_BIT_MASK) == 0
 
     keep = (
         m1
@@ -191,7 +205,7 @@ def read_granule(path: Path) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
         & np.isfinite(lon)
         & np.isfinite(val)
         & (qa >= QA_MIN)
-        & (land >= MIN_LAND_FRACTION)
+        & is_land
         & (lon >= LON_MIN)
         & (lon < LON_MAX)
         & (lat >= LAT_MIN)
@@ -218,19 +232,32 @@ def accumulate(
     return total, count
 
 
-def _fetch_and_bin(granule: Granule, workdir: Path) -> tuple[np.ndarray, np.ndarray] | None:
-    """Download one granule, bin it, delete it. Returns (sum, count) or None."""
-    s3 = _s3_client()
+def _fetch_and_bin(
+    granule: Granule, workdir: Path, s3
+) -> tuple[str, np.ndarray | None, np.ndarray | None]:
+    """Download one granule, bin it, delete it.
+
+    Returns a status alongside the grids so the caller can tell an orbit that
+    simply had no land in the region ("empty" — routine, most passes are ocean)
+    from one that genuinely failed to process ("failed" — a bug worth shouting
+    about). Conflating the two hid a parsing bug behind a plausible-looking
+    skip count.
+
+    The S3 client is passed in, not built here: constructing one costs ~2.4s
+    (botocore loads its service models), which dwarfed the useful work when it
+    was done per granule. boto3 clients are thread-safe for API calls.
+    """
     dest = workdir / granule.name
     try:
         s3.download_file(S3_BUCKET, granule.s3_key, str(dest))
         lons, lats, vals = read_granule(dest)
         if lons.size == 0:
-            return None
-        return accumulate(lons, lats, vals)
+            return "empty", None, None
+        total, count = accumulate(lons, lats, vals)
+        return "ok", total, count
     except Exception as e:  # one bad granule must not sink the period
-        print(f"    ! skipped {granule.name}: {type(e).__name__}: {str(e)[:90]}")
-        return None
+        print(f"    ! failed {granule.name}: {type(e).__name__}: {str(e)[:90]}", flush=True)
+        return "failed", None, None
     finally:
         dest.unlink(missing_ok=True)
 
@@ -305,6 +332,7 @@ def composite_period(
     end: dt.date,
     out_dir: Path,
     kind: str,
+    s3,
     limit: int | None = None,
 ) -> dict | None:
     granules = search_granules(start, end)
@@ -315,24 +343,38 @@ def composite_period(
         return None
 
     volume = sum(g.size_mb for g in granules)
-    print(f"  {label}: {len(granules)} granules ({volume:.0f} MB to stream)")
+    print(f"  {label}: {len(granules)} granules ({volume:.0f} MB to stream)", flush=True)
 
     total = np.zeros((NY, NX), dtype="float64")
     count = np.zeros((NY, NX), dtype="float64")
     done = 0
+    tally = {"ok": 0, "empty": 0, "failed": 0}
 
     with tempfile.TemporaryDirectory(prefix="matlas-s5p-") as tmp:
         workdir = Path(tmp)
         with concurrent.futures.ThreadPoolExecutor(max_workers=MAX_CONNECTIONS) as pool:
-            futures = {pool.submit(_fetch_and_bin, g, workdir): g for g in granules}
+            futures = {pool.submit(_fetch_and_bin, g, workdir, s3): g for g in granules}
             for fut in concurrent.futures.as_completed(futures):
-                result = fut.result()
+                status, part_total, part_count = fut.result()
+                tally[status] += 1
                 done += 1
-                if result is not None:
-                    total += result[0]
-                    count += result[1]
-                if done % 10 == 0 or done == len(granules):
-                    print(f"    {done}/{len(granules)} granules processed")
+                if status == "ok":
+                    total += part_total
+                    count += part_count
+                if done % 20 == 0 or done == len(granules):
+                    print(
+                        f"    {done}/{len(granules)} granules "
+                        f"({tally['ok']} with data, {tally['empty']} ocean-only)",
+                        flush=True,
+                    )
+
+    fail_rate = tally["failed"] / len(granules)
+    if fail_rate > MAX_ACCEPTABLE_SKIP_RATE:
+        print(
+            f"  {label}: WARNING {tally['failed']}/{len(granules)} granules FAILED to process "
+            f"({fail_rate:.0%}) — see the failure reasons above, this is usually a bug",
+            flush=True,
+        )
 
     with np.errstate(invalid="ignore", divide="ignore"):
         mean = np.where(count > 0, total / np.maximum(count, 1), np.nan)
@@ -358,6 +400,9 @@ def composite_period(
         "start": start.isoformat(),
         "end": end.isoformat(),
         "granules": len(granules),
+        "granules_with_data": tally["ok"],
+        "granules_ocean_only": tally["empty"],
+        "granules_failed": tally["failed"],
         "coverage_pct": round(100.0 * valid.sum() / valid.size, 2),
         "anomaly_coverage_pct": round(anom_pct, 2),
         "background_ppb": round(float(np.nanmedian(background)), 1),
@@ -370,7 +415,7 @@ def composite_period(
         "obs_total": int(count.sum()),
         "min_obs_for_anomaly": MIN_OBS_FOR_ANOMALY,
         "qa_min": QA_MIN,
-        "min_land_fraction": MIN_LAND_FRACTION,
+        "land_only": True,
         "file": str(out_path.relative_to(out_dir)).replace("\\", "/"),
     }
     print(
@@ -401,13 +446,14 @@ def run(
     if index_path.exists():
         existing = {e["period"]: e for e in json.loads(index_path.read_text())}
 
-    print(f"TROPOMI {kind}ly composites {start} -> {end}  (grid {NX}x{NY} @ {CELL}°)")
+    print(f"TROPOMI {kind}ly composites {start} -> {end}  (grid {NX}x{NY} @ {CELL}°)", flush=True)
+    s3 = _s3_client()  # built once and shared: construction costs ~2.4s
     results = list(existing.values())
     for label, p_start, p_end in periods(kind, start, end):
         if label in existing and (out_dir / existing[label]["file"]).exists():
-            print(f"  {label}: already done, skipping")
+            print(f"  {label}: already done, skipping", flush=True)
             continue
-        stats = composite_period(label, p_start, p_end, out_dir, kind, limit=limit)
+        stats = composite_period(label, p_start, p_end, out_dir, kind, s3, limit=limit)
         if stats:
             results = [r for r in results if r["period"] != label] + [stats]
             results.sort(key=lambda r: r["period"])
