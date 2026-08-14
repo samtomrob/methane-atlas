@@ -98,56 +98,49 @@ def _authorized_get(
     return r
 
 
-def check_cdse() -> Result:
-    service = "CDSE (Sentinel-5P)"
-    if not (config.CDSE_OAUTH.ready or config.CDSE_PASSWORD.ready):
-        return Result(service, SKIP, "not configured — see docs/CREDENTIALS.md")
+def check_cdse_search() -> Result:
+    """Granule discovery. The OData catalogue is anonymous, so this needs no
+    credential — it is the other half of the download path and worth asserting
+    because the whole pipeline starts here."""
+    service = "CDSE (granule search)"
+    try:
+        r = httpx.get(
+            CDSE_ODATA,
+            params={
+                "$filter": "contains(Name,'S5P_OFFL_L2__CH4')",
+                "$orderby": "ContentDate/Start desc",
+                "$top": "1",
+            },
+            headers={"User-Agent": "methane-atlas/0.1"},
+            timeout=60,
+            follow_redirects=True,
+        )
+        r.raise_for_status()
+        items = r.json().get("value", [])
+    except (httpx.HTTPError, ValueError) as e:
+        return Result(service, FAIL, f"catalogue query failed ({type(e).__name__})")
+    if not items:
+        return Result(service, FAIL, "catalogue reachable but returned no CH4 granules")
+    newest = (items[0].get("ContentDate") or {}).get("Start", "?")[:10]
+    return Result(service, OK, f"catalogue reachable (anonymous); newest CH4 granule {newest}")
 
+
+def check_cdse_oauth() -> Result:
+    """Informational only.
+
+    Verified 2026-08-14: a client_credentials token is accepted by the identity
+    service but REJECTED (401) by the OData product-download endpoint, which is
+    why this pipeline downloads over S3 instead. The OAuth client is therefore
+    not required — it exists for Sentinel Hub / openEO APIs we don't use.
+    """
+    service = "CDSE (OAuth, unused)"
+    if not config.CDSE_OAUTH.ready:
+        return Result(service, SKIP, "not set — not needed, pipeline downloads via S3")
     with httpx.Client(follow_redirects=True) as client:
         token, method = cdse_token(client)
-        if not token:
-            return Result(service, FAIL, method)
-
-        # Find one real CH4 granule, then prove we are authorized to fetch its
-        # bytes. A ranged GET keeps this to a few KB instead of ~500 MB.
-        try:
-            q = client.get(
-                CDSE_ODATA,
-                params={
-                    "$filter": "contains(Name,'L2__CH4___')",
-                    "$orderby": "ContentDate/Start desc",  # newest = still on hot storage
-                    "$top": "1",
-                },
-                timeout=60,
-            )
-            q.raise_for_status()
-            items = q.json().get("value", [])
-        except (httpx.HTTPError, ValueError) as e:
-            return Result(service, FAIL, f"token ok ({method}); catalogue query failed: {e}")
-        if not items:
-            return Result(service, OK, f"token ok ({method}); no CH4 granule returned to test download")
-
-        product_id = items[0].get("Id")
-        try:
-            d = _authorized_get(
-                client,
-                f"{CDSE_ODATA}({product_id})/$value",
-                token,
-                extra_headers={"Range": "bytes=0-2047"},
-            )
-        except httpx.HTTPError as e:
-            return Result(service, FAIL, f"token ok ({method}); download probe network error: {e}")
-        if d.status_code in (200, 206):
-            return Result(service, OK, f"token + granule download authorized ({method})")
-        if d.status_code == 202:
-            # Product is on cold storage and now staging — authorization passed,
-            # which is what this check is about.
-            return Result(service, OK, f"authorized ({method}); test granule staging from archive")
-        if d.status_code in (401, 403):
-            return Result(
-                service, FAIL, f"token ok ({method}) but download refused ({d.status_code})"
-            )
-        return Result(service, FAIL, f"token ok ({method}); download probe returned {d.status_code}")
+    if not token:
+        return Result(service, SKIP, f"token failed ({method}) — harmless, S3 is the download path")
+    return Result(service, SKIP, "token mints ok; unused (OData download rejects it by design)")
 
 
 def check_cdse_s3() -> Result:
@@ -222,9 +215,11 @@ def check_gee() -> Result:
         try:
             ee.Initialize(project=project)
         except ee.EEException:
-            return Result(service, FAIL, "not signed in — run `matlas gee-login`")
+            # Not a failure: Earth Engine is an optional shortcut, not a
+            # dependency — the pipeline sources everything from CDSE.
+            return Result(service, SKIP, "optional/unused; run `matlas gee-login` to enable")
         except Exception as e:
-            return Result(service, FAIL, f"initialize failed: {str(e)[:120]}")
+            return Result(service, SKIP, f"optional/unused; not initialised ({str(e)[:70]})")
 
     try:
         n = (
@@ -339,8 +334,9 @@ def check_r2() -> Result:
 
 
 CHECKS: tuple[Callable[[], Result], ...] = (
-    check_cdse,
+    check_cdse_search,
     check_cdse_s3,
+    check_cdse_oauth,
     check_gee,
     check_earthdata,
     check_carbon_mapper,

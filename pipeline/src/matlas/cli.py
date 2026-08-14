@@ -31,7 +31,24 @@ def main(argv: list[str] | None = None) -> None:
 
     sub.add_parser(
         "gee-login",
-        help="sign in to Earth Engine interactively (alternative to a service-account key)",
+        help="sign in to Earth Engine interactively (optional; unused by default)",
+    )
+
+    p_tropomi = sub.add_parser(
+        "tropomi", help="build TROPOMI methane composites from Sentinel-5P L2"
+    )
+    p_tropomi.add_argument(
+        "--start", default="2025-01-01", help="inclusive start date (default 2025-01-01)"
+    )
+    p_tropomi.add_argument("--end", default=None, help="exclusive end date (default today)")
+    p_tropomi.add_argument(
+        "--kind", choices=("week", "month"), default="week", help="compositing period"
+    )
+    p_tropomi.add_argument(
+        "--limit", type=int, default=None, help="cap granules per period (for pilot runs)"
+    )
+    p_tropomi.add_argument(
+        "--out", type=Path, default=REPO_ROOT / "data" / "rasters", help="output dir"
     )
 
     args = parser.parse_args(argv)
@@ -48,6 +65,14 @@ def main(argv: list[str] | None = None) -> None:
         from . import auth
 
         sys.exit(auth.gee_login())
+    elif args.command == "tropomi":
+        import datetime as dt
+
+        from . import tropomi
+
+        start = dt.date.fromisoformat(args.start)
+        end = dt.date.fromisoformat(args.end) if args.end else dt.date.today()
+        tropomi.run(args.out, start, end, kind=args.kind, limit=args.limit)
     elif args.command == "infra":
         from . import infra
 

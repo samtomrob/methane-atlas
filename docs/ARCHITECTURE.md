@@ -46,12 +46,16 @@ No database, no tile server, no API server for the MVP. Everything the browser n
 - **Gridding**: xarray, 0.05° target grid, qa_value ≥ 0.5 mask, area-weighted binning of L2 pixels. Working from L2 rather than a pre-binned L3 is what lets us set the quality threshold, compute per-cell observation counts, and derive uncertainty honestly.
 - **Backfill execution**: chunked by year, resumable, idempotent per period (`status.json` records the last completed period), so an interrupted run resumes rather than restarts.
 - **Earth Engine: dropped.** It would have saved a few hours of one-time download at the cost of a second account, an OAuth service-account flow, a monthly compute quota, and a noncommercial-only platform licence on an otherwise commercially-usable data path. `matlas gee-login` and the EE code path remain in the tree as an optional shortcut, unused by default.
-- **Products** (per period: ISO week and calendar month):
-  - `xch4_mean` — mean column XCH4 (ppb)
-  - `xch4_anom` — anomaly vs. rolling 90-day regional median (ppb) — this is the "where is it elevated" layer
-  - `valid_obs` — count of valid retrievals (honesty layer; PNG will be sparse due to cloud)
-- **Storage format**: one COG per product-period (`rasters/xch4/weekly/2026-W32_mean.tif`), plus rendered **raster PMTiles** per product (z3–z8, 256px, fixed colormap) for cheap map display. COGs stay available for client-side point queries (geotiff.js) so clicking the map shows the numeric value.
-- **Size estimate**: ROI at 0.05° ≈ 1040×920 px. ~390 weekly + ~90 monthly periods since 2019-02 ≈ **< 2 GB total** including tiles. Trivial for free-tier object storage.
+- **Products** — one 3-band COG per period (`month` primary, `week` secondary):
+  - band 1 `xch4_mean_ppb` — mean column XCH4 from qa ≥ 0.5 retrievals
+  - band 2 `xch4_anomaly_ppb` — mean minus a **latitude-dependent background** (per-row median over a ±1.0° sliding window), published **only where a cell has ≥ 3 observations**
+  - band 3 `valid_obs_count` — retrievals per cell; the honesty band
+- **Why the anomaly is built that way** (both learned from the first pilot run, 2026-08-14):
+  - A single region-wide median background reads the atmosphere's **north–south XCH4 gradient** as enhancement — across this ROI's 46° of latitude that dominates the real signal. Hence the latitude-banded background.
+  - At weekly grain the median cell has **1 observation**, and one retrieval's noise is the same order as the enhancement being looked for; the pilot's top eight "hotspots" were all single-observation cells. Hence the ≥3-observation gate on the anomaly band, and monthly as the primary grain. Mean and count bands stay unfiltered so the raw picture is always inspectable.
+- **Storage format**: one 3-band COG per period (`data/rasters/month/2026-07.tif`), plus rendered **raster PMTiles** per band (z3–z8, fixed colormap) for cheap map display. COGs stay available for client-side point queries (geotiff.js) so clicking the map returns the numeric value and its observation count.
+- **Measured size**: ROI at 0.05° = 1040×920 px; a 3-band deflate-compressed COG is **~1.9 MB**. The 2025→now monthly baseline is ~20 files ≈ 40 MB — small enough to ship in the repo, making R2 optional until weekly history or tiles grow it.
+- **Resumability**: `{kind}_index.json` records each completed period with its stats; a period already present with its file on disk is skipped, and the index is rewritten after every period, so an interrupted multi-hour run resumes where it stopped.
 
 ### 3.2 Infrastructure vectors
 
