@@ -1,0 +1,27 @@
+{
+  "generated_at": "2026-08-14T10:19:27+00:00",
+  "roi": [
+    108.0,
+    -45.0,
+    160.0,
+    1.0
+  ],
+  "layers": {
+    "pipelines_gas": 1448,
+    "pipelines_oil": 404,
+    "coal_mines": 114,
+    "gas_plants": 70
+  },
+  "attribution": [
+    "\u00a9 Commonwealth of Australia (Geoscience Australia), CC BY 4.0",
+    "Global Energy Monitor pipeline routes, CC BY 4.0",
+    "Open Electricity (OpenNEM) facility registry, CC BY-NC 4.0"
+  ],
+  "pending_sources": [
+    "TROPOMI composites (CDSE/GEE tokens)",
+    "EMIT + Carbon Mapper + IMEO + SRON plumes (phase 2)",
+    "GEM tracker spreadsheets (owner download form)",
+    "OGIM wells/processing (bulk ingest)",
+    "CER reported-emissions join (phase 3)"
+  ]
+}

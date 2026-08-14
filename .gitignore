@@ -15,9 +15,9 @@ web/.next/
 web/out/
 web/next-env.d.ts
 
-# local data staging (published artifacts live in object storage, not git;
-# the small v0 GeoJSONs in web/public/data ARE committed)
-data/
+# local data staging at repo root only (published artifacts live in object
+# storage, not git; the small v0 GeoJSONs in web/public/data ARE committed)
+/data/
 *.tar.gz
 
 # editors / os

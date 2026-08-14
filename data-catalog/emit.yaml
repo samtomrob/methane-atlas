@@ -9,11 +9,13 @@ verified: 2026-08-14
 urls:
   - url: https://cmr.earthdata.nasa.gov/stac/LPCLOUD
     expect: [200]
-  - url: https://earth.jpl.nasa.gov/emit/data/data-portal/Greenhouse-Gases/
+  - url: https://earth.jpl.nasa.gov/emit/
     expect: [200]
   - url: https://cmr.earthdata.nasa.gov/search/granules.json?collection_concept_id=C3242707413-LPCLOUD&page_size=1
     expect: [200]
     requires: EARTHDATA_TOKEN
 notes: >
   V002 (Feb 2026) includes emission rates + uncertainty, manually reviewed.
-  60 m; ±51.6° covers AU+PNG. V001 decommissioned Mar 2026.
+  60 m; ±51.6° covers AU+PNG. V001 decommissioned Mar 2026. The VISIONS
+  browse portal (earth.jpl.nasa.gov/emit/data/data-portal/...) is JS-routed
+  and 404s direct GETs — probe the mission root; fetch data via CMR-STAC.
