@@ -42,6 +42,29 @@ GEM_ATTRIB = "Global Energy Monitor pipeline routes, CC BY 4.0"
 OE_ATTRIB = "Open Electricity (OpenNEM) facility registry, CC BY-NC 4.0"
 
 
+def _normalise_geometry(geometry: dict[str, Any] | None) -> dict[str, Any] | None:
+    """Ensure a geometry carries a `type`.
+
+    Open Electricity returns geometries with `coordinates` but no `type`, which
+    is invalid GeoJSON: MapLibre silently refuses to draw them, so all 70 gas
+    power stations were absent from the map while still appearing in the counts.
+    Infer the type from the coordinate nesting depth.
+    """
+    if not geometry or "coordinates" not in geometry:
+        return geometry
+    if geometry.get("type"):
+        return geometry
+    node: Any = geometry["coordinates"]
+    depth = 0
+    while isinstance(node, (list, tuple)) and node and isinstance(node[0], (list, tuple)):
+        depth += 1
+        node = node[0]
+    inferred = {0: "Point", 1: "LineString", 2: "Polygon", 3: "MultiPolygon"}.get(depth)
+    if not inferred:
+        return geometry
+    return {**geometry, "type": inferred}
+
+
 def _feature(
     geometry: dict[str, Any],
     *,
@@ -70,7 +93,7 @@ def _feature(
         "license": license_,
     }
     props.update({k: v for k, v in extra.items() if v not in (None, "", " ")})
-    return {"type": "Feature", "geometry": geometry, "properties": props}
+    return {"type": "Feature", "geometry": _normalise_geometry(geometry), "properties": props}
 
 
 def _arcgis_features(client: httpx.Client, url: str) -> list[dict[str, Any]]:

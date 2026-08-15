@@ -98,6 +98,24 @@ def main(argv: list[str] | None = None) -> None:
         help="output GeoJSON",
     )
 
+    p_fac = sub.add_parser(
+        "facilities",
+        help="build per-facility records: detection history plus how often anyone looked",
+    )
+    p_fac.add_argument(
+        "--data", type=Path, default=REPO_ROOT / "web" / "public" / "data"
+    )
+    p_fac.add_argument(
+        "--out",
+        type=Path,
+        default=REPO_ROOT / "web" / "public" / "data" / "facilities.json",
+    )
+    p_fac.add_argument(
+        "--no-observability",
+        action="store_true",
+        help="skip the EMIT coverage queries (faster, but loses the key distinction)",
+    )
+
     p_assets = sub.add_parser(
         "plume-assets",
         help="download per-plume concentration imagery and attach wind context",
@@ -199,6 +217,10 @@ def main(argv: list[str] | None = None) -> None:
             max_scenes=args.max_scenes,
             only=args.site,
         )
+    elif args.command == "facilities":
+        from . import facilities
+
+        facilities.run(args.data, args.out, with_observability=not args.no_observability)
     elif args.command == "plume-assets":
         from . import plumeassets
 

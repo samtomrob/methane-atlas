@@ -50,6 +50,70 @@ type Manifest = {
 
 const PLUME_COLOR = { light: "#c2255c", dark: "#ff6b9d" };
 
+/** Facility verdicts. The distinction no plume catalogue makes: a site with no
+ *  detections is only meaningfully clean if something actually looked at it. */
+const WATCH = {
+  emitting: { light: "#d9480f", dark: "#ff7a2f", label: "Emitting" },
+  "watched, no plume": { light: "#0b7285", dark: "#3bc9db", label: "Watched, no plume" },
+  "under-observed": { light: "#b0851f", dark: "#ffd43b", label: "Too few looks" },
+  "blind spot": { light: "#868e96", dark: "#adb5bd", label: "Never observed" },
+  unknown: { light: "#adb5bd", dark: "#6c757d", label: "Unknown" },
+} as const;
+
+type WatchKey = keyof typeof WATCH;
+
+function watchColorExpression(dark: boolean): maplibregl.ExpressionSpecification {
+  const pairs: string[] = [];
+  for (const [key, v] of Object.entries(WATCH)) {
+    if (key === "unknown") continue;
+    pairs.push(key, dark ? v.dark : v.light);
+  }
+  return [
+    "match",
+    ["get", "watch_status"],
+    ...pairs,
+    dark ? WATCH.unknown.dark : WATCH.unknown.light,
+  ] as unknown as maplibregl.ExpressionSpecification;
+}
+
+function facilityRecordHtml(props: Record<string, unknown>): string {
+  const status = String(props.watch_status ?? "unknown") as WatchKey;
+  const meta = WATCH[status] ?? WATCH.unknown;
+  const n = Number(props.detections ?? 0);
+  const passes = props.emit_overpasses;
+  const rows: string[] = [];
+
+  if (n > 0) {
+    rows.push(
+      `<b>${n}</b> detection${n === 1 ? "" : "s"}` +
+        (props.last_detection ? `, most recent <b>${esc(props.last_detection)}</b>` : ""),
+    );
+    if (props.max_rate_kg_hr != null) {
+      rows.push(
+        `Peak measured rate <b>${Number(props.max_rate_kg_hr).toLocaleString()} kg/hr</b>`,
+      );
+    }
+  } else if (passes != null) {
+    rows.push(
+      `<b>No plume detected</b> across <b>${esc(passes)}</b> EMIT overpasses of this site.`,
+    );
+    rows.push(
+      status === "watched, no plume"
+        ? `<span style="opacity:.8">Looked at often enough for the absence to mean something.</span>`
+        : `<span style="opacity:.8">Too few looks to call it clean — absence here is not evidence.</span>`,
+    );
+  }
+  if (passes != null && n > 0) {
+    rows.push(`<span style="opacity:.8">${esc(passes)} EMIT overpasses of this site.</span>`);
+  }
+
+  const chip =
+    `<span style="display:inline-block;padding:1px 7px;border-radius:3px;font-size:.68rem;` +
+    `background:${meta.light}22;color:${meta.light};border:1px solid ${meta.light}55">` +
+    `${esc(meta.label)}</span>`;
+  return `<div style="margin-top:6px">${chip}</div><div class="popup-kv" style="margin-top:5px">${rows.join("<br/>")}</div>`;
+}
+
 const PROVIDER_LABEL: Record<string, string> = {
   "Carbon Mapper": "Carbon Mapper",
   "NASA EMIT": "EMIT",
@@ -161,7 +225,12 @@ function popupHtml(props: Record<string, unknown>): string {
           : esc(props.source)
       } (${esc(props.license ?? "")})`
     : "";
-  return `<div class="popup-title">${esc(props.name ?? "(unnamed)")}</div><div class="popup-kv">${rows}${src}</div>`;
+  // Facilities carry a watch record; linear infrastructure does not.
+  const record = props.watch_status ? facilityRecordHtml(props) : "";
+  return (
+    `<div class="popup-title">${esc(props.name ?? "(unnamed)")}</div>` +
+    `${record}<div class="popup-kv" style="margin-top:5px">${rows}${src}</div>`
+  );
 }
 
 /** Drape the selected plume's concentration raster at its own bounds.
@@ -226,6 +295,10 @@ export default function MethaneMap() {
     total: 0,
     shown: 0,
   });
+  const [facilityStats, setFacilityStats] = useState<{
+    facilities: number;
+    by_status: Record<string, number>;
+  } | null>(null);
   const [plumeStatus, setPlumeStatus] = useState<{
     count: number;
     near_infrastructure: number;
@@ -263,14 +336,28 @@ export default function MethaneMap() {
             paint: { "line-color": color, "line-width": 1.4, "line-opacity": 0.9 },
           });
         } else {
+          // Facilities are coloured by their watch verdict, not by layer:
+          // whether a site is emitting, checked-and-clean, or simply
+          // unexamined is the most useful thing the map can say about it.
+          const facilityLayer = layer.id === "coal_mines" || layer.id === "gas_plants";
           map.addLayer({
             id: layer.id,
             type: "circle",
             source: layer.id,
             layout: { visibility },
             paint: {
-              "circle-color": color,
-              "circle-radius": ["interpolate", ["linear"], ["zoom"], 3, 2.5, 8, 6],
+              "circle-color": facilityLayer ? watchColorExpression(dark) : color,
+              "circle-radius": facilityLayer
+                ? [
+                    "interpolate",
+                    ["linear"],
+                    ["zoom"],
+                    3,
+                    ["case", [">", ["coalesce", ["get", "detections"], 0], 0], 4, 2.5],
+                    8,
+                    ["case", [">", ["coalesce", ["get", "detections"], 0], 0], 9, 5],
+                  ]
+                : ["interpolate", ["linear"], ["zoom"], 3, 2.5, 8, 6],
               "circle-opacity": 0.9,
               "circle-stroke-width": 1,
               "circle-stroke-color": dark ? "#0e1519" : "#ffffff",
@@ -332,6 +419,11 @@ export default function MethaneMap() {
     fetch("/data/status.json")
       .then((r) => (r.ok ? r.json() : null))
       .then((s) => s && setCounts(s.layers ?? {}))
+      .catch(() => {});
+
+    fetch("/data/facilities.json")
+      .then((r) => (r.ok ? r.json() : null))
+      .then((d) => d?.summary && setFacilityStats(d.summary))
       .catch(() => {});
 
     fetch("/data/plumes_status.json")
@@ -595,6 +687,35 @@ export default function MethaneMap() {
               measured emission rate — an instantaneous snapshot, not an annual total. Click a
               plume to see its concentration image and wind.
             </p>
+          </>
+        ) : null}
+
+        {facilityStats ? (
+          <>
+            <div className="section-label">Facility watch</div>
+            <p className="caveat" style={{ marginTop: 0 }}>
+              Every mapped mine and gas plant, scored on whether anyone has actually looked at
+              it. A site with no detections only counts as clean if it has been observed.
+            </p>
+            {(
+              [
+                ["emitting", facilityStats.by_status?.emitting],
+                ["watched, no plume", facilityStats.by_status?.["watched, no plume"]],
+                ["under-observed", facilityStats.by_status?.["under-observed"]],
+                ["blind spot", facilityStats.by_status?.["blind spot"]],
+              ] as [WatchKey, number | undefined][]
+            )
+              .filter(([, n]) => n)
+              .map(([key, n]) => (
+                <div key={key} className="layer-toggle" style={{ cursor: "default" }}>
+                  <span
+                    className="swatch round"
+                    style={{ background: dark ? WATCH[key].dark : WATCH[key].light }}
+                  />
+                  {WATCH[key].label}
+                  <span className="count">{n}</span>
+                </div>
+              ))}
           </>
         ) : null}
 

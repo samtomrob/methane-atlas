@@ -1,10 +1,10 @@
 {
-  "generated_at": "2026-08-15T12:42:43+00:00",
+  "generated_at": "2026-08-15T13:10:28+00:00",
   "count": 798,
   "newest_detection": "2026-07-28T03:35:23Z",
   "newest_days_old": 18,
   "new_since_last_run": 0,
-  "first_run": true,
+  "first_run": false,
   "by_provider": {
     "Carbon Mapper": "367 plumes",
     "NASA EMIT": "11 plume complexes",
