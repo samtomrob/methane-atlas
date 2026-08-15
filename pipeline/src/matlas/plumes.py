@@ -17,6 +17,7 @@ worth showing a human; it is not proof that the mine emitted it.
 
 from __future__ import annotations
 
+import collections
 import csv
 import datetime as dt
 import io
@@ -524,6 +525,35 @@ def run(out_path: Path, data_dir: Path) -> dict[str, Any]:
         collected.extend(found)
         print(f"  {name:16s} {note}")
 
+    # Refuse to publish a worse dataset than last time.
+    #
+    # The first unattended run shipped without Carbon Mapper credentials. It
+    # published 500 plumes over the top of 798, stripped the imagery and wind
+    # enrichment, and reported 37 "new" detections that were really UNEP
+    # records previously deduplicated against the missing provider's copies.
+    # A refresh that loses a provider is a failure, not an update.
+    state_path = out_path.parent / "plumes_seen.json"
+    prior_counts: dict[str, int] = {}
+    if state_path.exists():
+        try:
+            prior_counts = json.loads(state_path.read_text()).get("provider_counts", {})
+        except (ValueError, OSError):
+            prior_counts = {}
+
+    now_counts = collections.Counter(p.provider for p in collected)
+    regressions = [
+        f"{name}: {prior} -> {now_counts.get(name, 0)}"
+        for name, prior in prior_counts.items()
+        if prior > 0 and now_counts.get(name, 0) == 0
+    ]
+    if regressions:
+        raise SystemExit(
+            "Refusing to publish: a provider that previously returned data now returns "
+            "none, which would overwrite the live layer with a smaller one.\n  "
+            + "\n  ".join(regressions)
+            + "\nCheck credentials, or pass --allow-regression if the loss is intended."
+        )
+
     before = len(collected)
     plumes = dedupe(collected)
     infra = _load_infrastructure(data_dir)
@@ -632,7 +662,13 @@ def run(out_path: Path, data_dir: Path) -> dict[str, Any]:
     }
     (out_path.parent / "plumes_new.json").write_text(json.dumps(feed, indent=2), encoding="utf-8")
     state_path.write_text(
-        json.dumps({"updated": summary["generated_at"], "ids": sorted(current_ids)}),
+        json.dumps(
+            {
+                "updated": summary["generated_at"],
+                "provider_counts": dict(now_counts),
+                "ids": sorted(current_ids),
+            }
+        ),
         encoding="utf-8",
     )
 
