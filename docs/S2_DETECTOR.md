@@ -69,6 +69,19 @@ Not incremental tuning. The gap is methodological:
 
 UNEP's MARS-S2L does this operationally with a team behind it. Matching it in a single build was not a realistic target, and the honest read is that **our value is in fusion, infrastructure association and regional depth — not in re-deriving detections that better-resourced groups already publish**.
 
+## Correction: the PNG run was pointed at the wrong place
+
+Discovered 2026-08-15 while verifying coordinates for an observation request. The PNG site coordinates came from recall, and checking them against OpenStreetMap features tagged `industrial=natural_gas` showed they were badly out:
+
+| Site | Used | Actual (OSM) | Error |
+|---|---|---|---|
+| Hides Gas Conditioning Plant | 142.87, −5.90 | **142.8128, −6.0029** | ~13 km |
+| PNG LNG plant, Caution Bay | 146.87, −9.16 | **147.0203, −9.3415** | ~24 km |
+
+At a 6 km half-width the Hides plant fell **outside the box the detector searched**, so the PNG run never looked at the facility.
+
+This does not rescue the detector — the Australian sites *were* correctly located and still failed against their controls, and the failure is noise-limited rather than aiming-limited. But the PNG result specifically should be read as "not tested", not "tested and found nothing". Coordinates are corrected in `s2detect.py` with per-site confidence noted.
+
 ## For PNG specifically
 
 The gap is real: no provider publishes a single plume there, and TROPOMI cannot see it. But Sentinel-2 band-ratio detection is not the way in — PNG has the worst combination of dark vegetation, persistent cloud and steep terrain in the region.

@@ -123,15 +123,38 @@ class Site:
         return self.lon - dlon, self.lat - dlat, self.lon + dlon, self.lat + dlat
 
 
-# The PNG LNG / Papua LNG chain. Coordinates sit on the GEM pipeline routes
-# already in this project's infrastructure layer.
+# The PNG LNG / Papua LNG chain.
+#
+# Coordinates corrected 2026-08-15 against OpenStreetMap features tagged
+# industrial=natural_gas, after the originals (from recall) proved 12-24 km
+# out. That error mattered: at a 6 km half-width, the Hides plant sat entirely
+# OUTSIDE the box the detector searched, so the PNG run never looked at the
+# facility at all. Confidence is noted per site.
 PNG_SITES: tuple[Site, ...] = (
-    Site("hides", "Hides Gas Conditioning Plant", 142.87, -5.90, 6.0, "upstream conditioning, Hela"),
-    Site("angore", "Angore wellpads", 142.99, -5.96, 5.0, "tie-in to Hides"),
-    Site("kutubu", "Kutubu Central Processing Facility", 143.32, -6.41, 5.0, "oil CPF, associated gas"),
-    Site("gobe", "Gobe processing facility", 143.55, -6.78, 4.0, ""),
-    Site("cautionbay", "PNG LNG plant, Caution Bay", 146.87, -9.16, 6.0, "liquefaction and export"),
-    Site("elk", "Elk-Antelope (Papua LNG)", 145.35, -7.55, 5.0, "development area"),
+    Site(
+        "hides", "Hides Gas Conditioning Plant", 142.8128, -6.0029, 6.0,
+        "OSM industrial=natural_gas; upstream conditioning, Hela",
+    ),
+    Site(
+        "cautionbay", "PNG LNG plant, Caution Bay", 147.0203, -9.3415, 6.0,
+        "OSM 'Exxon-Mobil PNG LNG Plant', industrial=natural_gas; liquefaction and export",
+    ),
+    Site(
+        "hides_gte", "Hides gas-to-electricity", 142.7713, -5.9118, 4.0,
+        "OSM landuse=industrial; separate from the conditioning plant",
+    ),
+    Site(
+        "angore", "Angore wellpads", 142.8850, -5.9767, 5.0,
+        "OSM place node; wellpad area tied into Hides",
+    ),
+    Site(
+        "kutubu", "Kutubu / Moro operations", 143.2310, -6.3600, 6.0,
+        "OSM Moro camp/airport cluster; CPF itself untagged — approximate",
+    ),
+    Site(
+        "juha", "Juha area petroleum well", 142.5075, -5.8279, 4.0,
+        "OSM man_made=petroleum_well, unnamed",
+    ),
 )
 
 # Australian coal mines, chosen because other providers have already detected
