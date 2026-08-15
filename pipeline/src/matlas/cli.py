@@ -81,6 +81,23 @@ def main(argv: list[str] | None = None) -> None:
         help="dir holding the infrastructure layers used for association",
     )
 
+    p_s2 = sub.add_parser(
+        "s2-detect", help="detect methane plumes ourselves from Sentinel-2 imagery"
+    )
+    p_s2.add_argument("--region", default="png", help="site group (default png)")
+    p_s2.add_argument("--site", default=None, help="restrict to one site key")
+    p_s2.add_argument("--start", default=None, help="start date (default 1 year back)")
+    p_s2.add_argument("--end", default=None, help="end date (default today)")
+    p_s2.add_argument(
+        "--max-scenes", type=int, default=14, help="cap scenes per site (least cloudy first)"
+    )
+    p_s2.add_argument(
+        "--out",
+        type=Path,
+        default=REPO_ROOT / "web" / "public" / "data" / "s2_detections.geojson",
+        help="output GeoJSON",
+    )
+
     p_clim = sub.add_parser(
         "climatology",
         help="average every composite into a long-term enhancement layer (low-noise)",
@@ -141,6 +158,19 @@ def main(argv: list[str] | None = None) -> None:
         from . import plumes
 
         plumes.run(args.out, args.data)
+    elif args.command == "s2-detect":
+        import datetime as dt
+
+        from . import s2detect
+
+        s2detect.run(
+            args.out,
+            region=args.region,
+            start=dt.date.fromisoformat(args.start) if args.start else None,
+            end=dt.date.fromisoformat(args.end) if args.end else None,
+            max_scenes=args.max_scenes,
+            only=args.site,
+        )
     elif args.command == "climatology":
         from . import climatology
 

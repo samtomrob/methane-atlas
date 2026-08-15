@@ -120,7 +120,7 @@ Monitoring/alerting on pipeline failures; methodology page finalized; mobile lay
 | D-4 | MVP temporal grain | **Monthly is the primary grain; weekly available but secondary.** Empirical reason: a weekly composite gives a median of **1 observation per cell** over this ROI (ocean has no CH4 retrievals, and cloud removes much of the rest), which is too thin for the anomaly layer to mean anything. Monthly reaches usable density. Weekly stays supported via `--kind week` for recent-period detail. |
 | D-5 | History depth | ~~2019 → now~~ → **REVISED 2026-08-14: baseline 2025-01-01 → now** (owner call). Measured at **2,184 OFFL granules / ~127 GB streamed** for the ROI. Note the 571 GB and 127 GB figures are *transfer*, not storage: granules are downloaded, binned, and deleted, so peak disk is a few hundred MB and the composites total ~1 GB. Extending back to 2019 later is one command with no re-work — periods are immutable and the index is resumable. |
 | D-6 | Name & domain | **"Methane Atlas" as working name**; final name/domain still open (differentiate from openmethane.org) — non-blocking |
-| D-7 | Commit to noncommercial | **Committed: noncommercial public-good use** → NC layers (Carbon Mapper, IMEO, Open Methane, Open Electricity) are in; attribution page must state this |
+| D-7 | Commit to noncommercial | **Committed: noncommercial public-good use** → NC layers (Carbon Mapper, IMEO, Open Methane, Open Electricity) are in; attribution page must state this. **Reaffirmed 2026-08-15:** non-commercial today; if commercialisation is ever chosen, licences get paid for or renegotiated at that point. Do not let a hypothetical future block using the best available data now. |
 
 ## 6. Accounts & keys needed from the owner
 

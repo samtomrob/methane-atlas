@@ -30,9 +30,11 @@ Two of the four sources are non-commercial, and one is share-alike:
 - **UNEP IMEO is CC BY-NC-SA 4.0.** Share-Alike is the sharp edge: a derivative *database* must be released under the same licence. Our merged `plumes.geojson` blends IMEO records with the rest, so the combined product is realistically bound by BY-NC-SA. Anyone may insist we license it that way.
 - **Carbon Mapper is non-commercial with attribution**, on terms they set and can revise.
 
+> **Owner decision, 2026-08-15:** this project is non-commercial today, and if that ever changes the licences get renegotiated or paid for then. An undefined future is not allowed to constrain present work. The consequences below are recorded so the decision stays informed — they are **not** a reason to avoid a source now.
+
 **Consequences, stated plainly:**
 
-1. This project **cannot become commercial** while the plume layer includes IMEO or Carbon Mapper data. Not "would need a conversation" — the licences forbid it.
+1. This project **cannot become commercial** while the plume layer includes IMEO or Carbon Mapper data. Not "would need a conversation" — the licences forbid it. Both offer paid or negotiated commercial terms, so this is a bill, not a wall.
 2. The merged plume layer **cannot be released more openly** than BY-NC-SA.
 3. If either provider changes terms, restricts access, or shuts down, our headline layer disappears. We have no independent capability.
 4. Attribution is a live obligation, not a footnote. It was missing from the UI until this was written; that is now fixed.
@@ -66,7 +68,7 @@ Running our own detection over the PNG LNG chain would produce **genuinely new d
 
 Keep both, in this order:
 
-1. **Keep the aggregated layer** — it is 797 real plumes today, it is free, and building our own will not match that coverage for months. Attribute it properly and accept the non-commercial ceiling for now.
+1. **Keep the aggregated layer** — it is 797 real plumes today, it is free, and building our own will not match that coverage for months. Attribute it properly and take the non-commercial terms; they are revisitable if the project's status ever changes.
 2. **Build our own Sentinel-2 detection as Phase 2b**, starting with the highest-value gap rather than trying to replicate anyone globally:
    - **PNG LNG chain** (Hides, Kutubu, Caution Bay) — nobody is looking, and we have the imagery
    - **Bowen Basin and Hunter Valley underground mines** — where the 585 associated plumes already cluster, giving us ready-made validation targets
