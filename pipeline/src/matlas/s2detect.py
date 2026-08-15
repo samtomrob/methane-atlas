@@ -272,28 +272,48 @@ def _band_uris(s3, key: str) -> dict[str, str] | None:
     return found if len(found) == 3 else None
 
 
+def _site_window(ds, site: Site):
+    """The site's footprint as a pixel window, clipped to the tile.
+
+    Clipping rather than rejecting matters: Sentinel-2 tiles are 110 km and
+    MGRS zone boundaries fall at whole degrees, so an AOI near an edge
+    overflows. Rejecting outright made such sites silently return no data —
+    a control site sitting exactly on the 150°E zone boundary read zero
+    scenes and looked like missing imagery rather than a bug. All scenes of a
+    tile share one pixel grid, so an identically clipped window stays aligned
+    across the stack.
+    """
+    from rasterio.warp import transform_bounds
+    from rasterio.windows import Window, from_bounds
+
+    lon0, lat0, lon1, lat1 = site.bbox()
+    left, bottom, right, top = transform_bounds(
+        "EPSG:4326", ds.crs, lon0, lat0, lon1, lat1, densify_pts=21
+    )
+    w = from_bounds(left, bottom, right, top, ds.transform).round_offsets().round_lengths()
+    col0 = max(0, int(w.col_off))
+    row0 = max(0, int(w.row_off))
+    col1 = min(ds.width, int(w.col_off + w.width))
+    row1 = min(ds.height, int(w.row_off + w.height))
+    if col1 - col0 < 24 or row1 - row0 < 24:
+        return None, 0.0
+    clipped = Window(col0, row0, col1 - col0, row1 - row0)
+    requested = max(float(w.width) * float(w.height), 1.0)
+    coverage = (clipped.width * clipped.height) / requested
+    return clipped, coverage
+
+
 def _read_window(uris: dict[str, str], site: Site) -> tuple[np.ndarray, np.ndarray, np.ndarray] | None:
     """Read B11, B12 and SCL over the site footprint only."""
     import rasterio
-    from rasterio.warp import transform_bounds
-    from rasterio.windows import from_bounds
 
-    lon0, lat0, lon1, lat1 = site.bbox()
     bands: dict[str, np.ndarray] = {}
     window = None
     for band in ("B11", "B12", "SCL"):
         with rasterio.open(uris[band]) as ds:
             if window is None:
-                left, bottom, right, top = transform_bounds(
-                    "EPSG:4326", ds.crs, lon0, lat0, lon1, lat1, densify_pts=21
-                )
-                window = from_bounds(left, bottom, right, top, ds.transform).round_offsets().round_lengths()
-                if window.width < 24 or window.height < 24:
-                    return None
-                # Reject windows that fall outside the tile.
-                if window.col_off < 0 or window.row_off < 0:
-                    return None
-                if window.col_off + window.width > ds.width or window.row_off + window.height > ds.height:
+                window, coverage = _site_window(ds, site)
+                if window is None or coverage < 0.25:
                     return None
             bands[band] = ds.read(1, window=window).astype("float64")
     return bands["B11"], bands["B12"], bands["SCL"]
@@ -385,13 +405,45 @@ def detect_site(
     by_tile: dict[str, list[dict[str, Any]]] = {}
     for s in usable_scenes:
         by_tile.setdefault(s["tile"] or "?", []).append(s)
-    tile, tile_scenes = max(by_tile.items(), key=lambda kv: len(kv[1]))
+
+    # Choose on how much of the site a tile actually covers, then on how many
+    # scenes it has. Picking purely by scene count can select a tile the AOI
+    # only clips the corner of — which is how a control site on a UTM zone
+    # boundary ended up reading nothing at all.
+    import rasterio
+
+    scored: list[tuple[float, int, str, list[dict[str, Any]]]] = []
+    for tname, tscenes in by_tile.items():
+        probe = sorted(tscenes, key=lambda s: s["cloud"] if s["cloud"] is not None else 100)[0]
+        uris = _band_uris(s3, probe["key"])
+        if not uris:
+            continue
+        try:
+            with rasterio.open(uris["B12"]) as ds:
+                _, coverage = _site_window(ds, site)
+        except Exception:
+            continue
+        scored.append((round(coverage, 3), len(tscenes), tname, tscenes))
+    if not scored:
+        return [], {
+            "site": site.key,
+            "scenes_found": len(scenes),
+            "scenes_usable": len(usable_scenes),
+            "status": "no readable tile",
+        }
+    scored.sort(reverse=True)
+    coverage, _, tile, tile_scenes = scored[0]
+    if verbose and len(scored) > 1:
+        print(
+            "  tiles: "
+            + ", ".join(f"{t}({c:.0%} of AOI, {n} scenes)" for c, n, t, _ in scored)
+        )
     if max_scenes:
         tile_scenes = sorted(tile_scenes, key=lambda s: s["cloud"] if s["cloud"] is not None else 100)[
             :max_scenes
         ]
     if verbose:
-        print(f"  tile {tile}: {len(tile_scenes)} scenes")
+        print(f"  tile {tile}: {len(tile_scenes)} scenes, covering {coverage:.0%} of the site")
 
     # Load every scene's bands once. B11 and B12 are kept separately, not just
     # their ratio, so the physical test below can be applied.
@@ -444,11 +496,7 @@ def detect_site(
     # Geo-referencing for the window, taken once from any scene.
     uris = _band_uris(s3, ratios[0][0]["key"])
     with rasterio.open(uris["B12"]) as ds:
-        lon0, lat0, lon1, lat1 = site.bbox()
-        left, bottom, right, top = transform_bounds(
-            "EPSG:4326", ds.crs, lon0, lat0, lon1, lat1, densify_pts=21
-        )
-        win = from_bounds(left, bottom, right, top, ds.transform).round_offsets().round_lengths()
+        win, _ = _site_window(ds, site)
         win_transform = ds.window_transform(win)
         crs = ds.crs
 

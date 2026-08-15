@@ -93,6 +93,14 @@ Most-detected facilities, all underground coal mines: Grosvenor (33), Mandalong 
 
 Each plume carries an instantaneous rate in kg/hr from a single overpass. Adding them across 499 detections spanning three years yields ~3.4 million kg/hr, which annualises to far more than Australia's entire methane inventory — it is meaningless. Detections sample scattered moments and are biased toward large, detectable events. The pipeline records this caveat in `plumes_status.json` and the UI repeats it on every popup.
 
+## 6. Building our own detector: attempted, validated, does not work
+
+We implemented Sentinel-2 multi-band multi-pass detection and tested it against infrastructure-free control sites and against the 797 independently measured plumes. It fails both tests: **1.74× target-to-control ratio**, and **1 same-day coincidence out of 20 opportunities**. Ashton (37 known plumes) scores identically to NSW bushland; Appin (35 known plumes) scores identically to empty rangeland.
+
+Nothing from it is published. Full write-up, including the three bugs found and what a working version would need, in [S2_DETECTOR.md](S2_DETECTOR.md).
+
+The most instructive part: a tile-edge bug had been silently zeroing one control site, which made the false-positive floor look lower than it was and the ratio look like 7.5×. Fixing the *control* is what revealed the *detector* did not work.
+
 ## What this means for the build
 
 1. **TROPOMI is regional context, not detection.** Ship it as concentration and long-term enhancement, with the surface-bias caveat visible in the UI, not buried in a methodology page.
