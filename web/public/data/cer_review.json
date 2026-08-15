@@ -1,0 +1,11 @@
+[
+  {
+    "facility": "Traralgon Network Support",
+    "layer": "gas_plants",
+    "state": "VIC",
+    "cer_name": "Multinet Principal Distribution Network and South Gippsland Pipeline",
+    "cer_state": "VIC",
+    "cer_methane_tco2e": 158881.0,
+    "score": 0.78
+  }
+]

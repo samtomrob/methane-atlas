@@ -116,6 +116,17 @@ def main(argv: list[str] | None = None) -> None:
         help="skip the EMIT coverage queries (faster, but loses the key distinction)",
     )
 
+    p_rep = sub.add_parser(
+        "reported",
+        help="join CER Safeguard reported methane to mapped facilities (reported vs observed)",
+    )
+    p_rep.add_argument("--data", type=Path, default=REPO_ROOT / "web" / "public" / "data")
+    p_rep.add_argument(
+        "--cer",
+        type=Path,
+        default=REPO_ROOT / "data" / "cer" / "baselines-and-emissions-table-2024-25.csv",
+    )
+
     p_assets = sub.add_parser(
         "plume-assets",
         help="download per-plume concentration imagery and attach wind context",
@@ -217,6 +228,10 @@ def main(argv: list[str] | None = None) -> None:
             max_scenes=args.max_scenes,
             only=args.site,
         )
+    elif args.command == "reported":
+        from . import reported
+
+        reported.run(args.data, args.cer)
     elif args.command == "facilities":
         from . import facilities
 

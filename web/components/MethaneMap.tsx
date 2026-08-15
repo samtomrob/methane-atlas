@@ -111,7 +111,36 @@ function facilityRecordHtml(props: Record<string, unknown>): string {
     `<span style="display:inline-block;padding:1px 7px;border-radius:3px;font-size:.68rem;` +
     `background:${meta.light}22;color:${meta.light};border:1px solid ${meta.light}55">` +
     `${esc(meta.label)}</span>`;
-  return `<div style="margin-top:6px">${chip}</div><div class="popup-kv" style="margin-top:5px">${rows.join("<br/>")}</div>`;
+
+  // Reported vs observed. Both figures shown, never a ratio: an annual mean
+  // and an instantaneous peak are different measurements, and dividing one by
+  // the other produces a big number that reads as an accusation.
+  let reported = "";
+  if (props.reported_avg_kg_hr != null) {
+    const avg = Number(props.reported_avg_kg_hr);
+    const peak = props.peak_in_period_kg_hr;
+    const dets = Number(props.detections_in_period ?? 0);
+    reported =
+      `<div style="margin-top:7px;padding-top:6px;border-top:1px solid currentColor;opacity:.95">` +
+      `<div style="font-size:.7rem;letter-spacing:.06em;text-transform:uppercase;opacity:.65;margin-bottom:3px">` +
+      `Reported vs observed · ${esc(String(props.reporting_period ?? "").slice(0, 4))}–${esc(
+        String(props.reporting_period ?? "").slice(14, 18),
+      )}</div>` +
+      `<div class="popup-kv">` +
+      `Operator declared <b>${avg.toLocaleString()} kg/hr</b> average` +
+      ` <span style="opacity:.7">(${Number(props.reported_methane_tco2e).toLocaleString()} tCO₂-e/yr)</span><br/>` +
+      (dets > 0 && peak != null
+        ? `Satellites saw a peak of <b>${Number(peak).toLocaleString()} kg/hr</b> across ${dets} detection${dets === 1 ? "" : "s"}`
+        : `No plume detected in that year`) +
+      `<br/><span style="opacity:.7">An annual average and an instantaneous peak measure different things — ` +
+      `a higher peak is expected, not a discrepancy.</span>` +
+      `</div></div>`;
+  }
+
+  return (
+    `<div style="margin-top:6px">${chip}</div>` +
+    `<div class="popup-kv" style="margin-top:5px">${rows.join("<br/>")}</div>${reported}`
+  );
 }
 
 const PROVIDER_LABEL: Record<string, string> = {
