@@ -294,6 +294,13 @@ def enrich(data_dir: Path, cer_path: Path) -> dict[str, Any]:
     return payload
 
 
+# Fields withdrawn from the published data. The stamper only ever adds keys, so
+# a retired metric survives in the GeoJSON forever unless it is explicitly
+# removed — and this one, a peak-over-average "ratio", was withdrawn precisely
+# because it reads as an accusation.
+RETIRED_FIELDS = ("observed_vs_reported_ratio",)
+
+
 def stamp(data_dir: Path, facilities: list[dict[str, Any]]) -> int:
     by_key = {(f["layer"], f["name"]): f for f in facilities}
     n = 0
@@ -303,7 +310,10 @@ def stamp(data_dir: Path, facilities: list[dict[str, Any]]) -> int:
             continue
         data = json.loads(path.read_text(encoding="utf-8"))
         for feat in data.get("features", []):
-            rec = by_key.get((layer, (feat.get("properties") or {}).get("name")))
+            props = feat.get("properties") or {}
+            for dead in RETIRED_FIELDS:
+                props.pop(dead, None)
+            rec = by_key.get((layer, props.get("name")))
             if not rec:
                 continue
             for field in (

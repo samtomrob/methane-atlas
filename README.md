@@ -8,6 +8,7 @@ An open web map of methane emissions and their likely sources across **Australia
 |---|---|
 | [docs/FINDINGS.md](docs/FINDINGS.md) | **Measured results and limitations — read this before trusting any layer** |
 | [docs/DATA_PROVENANCE.md](docs/DATA_PROVENANCE.md) | **Whose data this is, what the licences cost us, and what building our own detection would take** |
+| [docs/REPORTED_VS_OBSERVED.md](docs/REPORTED_VS_OBSERVED.md) | **Declared methane vs satellite detections — the comparison nobody else publishes** |
 | [docs/DIFFERENTIATION.md](docs/DIFFERENTIATION.md) | **Why this exists and how it differs from Carbon Mapper / UNEP — read first** |
 | [docs/LIVE_MONITORING.md](docs/LIVE_MONITORING.md) | Recency, plume imagery, wind, and the daily alert job |
 | [docs/PNG_EMIT_FINDING.md](docs/PNG_EMIT_FINDING.md) | **PNG observed 44 times in the existing EMIT archive — no large plume. Original analysis.** |
@@ -46,4 +47,5 @@ web/            Next.js + MapLibre app (static export)
 data-catalog/   one YAML per data source: URLs, license, cadence, probe rules
 docs/           BUILD_PLAN, DATA_SOURCES, ARCHITECTURE, CREDENTIALS
 ```
+
 
