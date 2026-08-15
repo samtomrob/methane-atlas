@@ -6,7 +6,8 @@ An open web map of methane emissions and their likely sources across **Australia
 
 | Doc | What it is |
 |---|---|
-| [docs/FINDINGS.md](docs/FINDINGS.md) | **Measured results and limitations from the first TROPOMI baseline — read this before trusting any layer** |
+| [docs/FINDINGS.md](docs/FINDINGS.md) | **Measured results and limitations — read this before trusting any layer** |
+| [docs/DATA_PROVENANCE.md](docs/DATA_PROVENANCE.md) | **Whose data this is, what the licences cost us, and what building our own detection would take** |
 | [docs/BUILD_PLAN.md](docs/BUILD_PLAN.md) | Vision, phases, agent task breakdown, acceptance criteria, open decisions |
 | [docs/DATA_SOURCES.md](docs/DATA_SOURCES.md) | Verified catalog of every data source (access, license, cadence) |
 | [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) | System design: pipeline → static data store → web app |

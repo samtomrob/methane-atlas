@@ -147,11 +147,14 @@ def fetch_carbon_mapper() -> tuple[list[Plume], str]:
             r = client.get(
                 f"{CM_BASE}/catalog/plumes/annotated",
                 params={
+                    # bbox must be four repeated numeric params; a comma string
+                    # is rejected. sort takes fixed literals only — anything
+                    # like "-published_at" returns 422.
                     "bbox": [LON_MIN, LAT_MIN, LON_MAX, LAT_MAX],
                     "plume_gas": "CH4",
                     "limit": limit,
                     "offset": offset,
-                    "sort": "-published_at",
+                    "sort": "published_desc",
                 },
                 headers=headers,
                 timeout=120,
@@ -161,6 +164,7 @@ def fetch_carbon_mapper() -> tuple[list[Plume], str]:
             r.raise_for_status()
             payload = r.json()
             items = payload.get("items", payload if isinstance(payload, list) else [])
+            # `nearby_items` are outside the bbox — deliberately ignored.
             for it in items:
                 centre = _centroid(it.get("geometry_json"))
                 if not centre or not _in_roi(*centre):

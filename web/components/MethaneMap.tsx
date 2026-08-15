@@ -463,9 +463,30 @@ export default function MethaneMap() {
         ))}
 
         <footer>
+          <b>Plume detections are other organisations&rsquo; work, not ours.</b> Every plume shown
+          was found and quantified by:{" "}
+          <a href="https://methanedata.unep.org/" target="_blank" rel="noreferrer">
+            UNEP IMEO / MARS
+          </a>{" "}
+          (CC BY-NC-SA 4.0),{" "}
+          <a href="https://carbonmapper.org/" target="_blank" rel="noreferrer">
+            Carbon Mapper
+          </a>{" "}
+          (non-commercial use, attribution required),{" "}
+          <a href="https://www.sron.nl/" target="_blank" rel="noreferrer">
+            SRON
+          </a>{" "}
+          (CC BY 4.0, Schuit et al. 2023), and{" "}
+          <a href="https://earth.jpl.nasa.gov/emit/" target="_blank" rel="noreferrer">
+            NASA EMIT
+          </a>{" "}
+          (doi:10.5067/EMIT/EMITL2BCH4PLM.002). This project contributes the regional fusion,
+          duplicate matching and infrastructure association only.
+          <br />
+          <br />
           {manifest ? `${manifest.attribution}. ` : ""}Infrastructure: Geoscience Australia &amp;
           Global Energy Monitor (CC BY 4.0), Open Electricity (CC BY-NC 4.0). Basemap ©
-          OpenStreetMap contributors.{" "}
+          OpenStreetMap contributors. Non-commercial use only — several sources require it.{" "}
           <a
             href="https://github.com/samtomrob/methane-atlas/blob/main/docs/FINDINGS.md"
             target="_blank"
