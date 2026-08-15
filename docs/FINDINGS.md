@@ -101,6 +101,14 @@ Nothing from it is published. Full write-up, including the three bugs found and 
 
 The most instructive part: a tile-edge bug had been silently zeroing one control site, which made the false-positive floor look lower than it was and the ratio look like 7.5×. Fixing the *control* is what revealed the *detector* did not work.
 
+## 7. PNG resolved: observed 44 times, no large plume
+
+The zero-plumes-over-PNG result (§1) is now explained. Reading the existing EMIT archive — data that was already public and, as far as we can tell, unprocessed for PNG — gives **44 usable overpasses of six gas facilities between May 2024 and May 2026**, at 37% observability. **None exceeds +1σ above its scene background**; the maximum anywhere is +0.42σ.
+
+So PNG is not unexamined, and it is not visibly leaking at scale. The bound is real but loose: this test would only catch a very large release, 63% of overpasses are lost to cloud, and chronic low-rate venting stays invisible. Full detail and caveats in [PNG_EMIT_FINDING.md](PNG_EMIT_FINDING.md).
+
+Also corrected there: EMIT **cannot be tasked** — body-mounted on the ISS, no gimbal, no nomination route. An earlier plan to nominate PNG targets was both impossible and unnecessary.
+
 ## What this means for the build
 
 1. **TROPOMI is regional context, not detection.** Ship it as concentration and long-term enhancement, with the surface-bias caveat visible in the UI, not buried in a methodology page.

@@ -98,6 +98,18 @@ def main(argv: list[str] | None = None) -> None:
         help="output GeoJSON",
     )
 
+    p_emit = sub.add_parser(
+        "emit-scan",
+        help="read the existing EMIT methane archive over PNG facilities (observability audit)",
+    )
+    p_emit.add_argument("--limit", type=int, default=None, help="cap granules per site")
+    p_emit.add_argument(
+        "--out",
+        type=Path,
+        default=REPO_ROOT / "web" / "public" / "data" / "png_emit_scan.json",
+        help="output JSON",
+    )
+
     p_clim = sub.add_parser(
         "climatology",
         help="average every composite into a long-term enhancement layer (low-noise)",
@@ -170,6 +182,15 @@ def main(argv: list[str] | None = None) -> None:
             end=dt.date.fromisoformat(args.end) if args.end else None,
             max_scenes=args.max_scenes,
             only=args.site,
+        )
+    elif args.command == "emit-scan":
+        from . import emitscan
+        from .s2detect import PNG_SITES
+
+        emitscan.run(
+            {s.name: (s.lon, s.lat) for s in PNG_SITES},
+            args.out,
+            limit=args.limit,
         )
     elif args.command == "climatology":
         from . import climatology

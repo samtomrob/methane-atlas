@@ -8,6 +8,7 @@ An open web map of methane emissions and their likely sources across **Australia
 |---|---|
 | [docs/FINDINGS.md](docs/FINDINGS.md) | **Measured results and limitations — read this before trusting any layer** |
 | [docs/DATA_PROVENANCE.md](docs/DATA_PROVENANCE.md) | **Whose data this is, what the licences cost us, and what building our own detection would take** |
+| [docs/PNG_EMIT_FINDING.md](docs/PNG_EMIT_FINDING.md) | **PNG observed 44 times in the existing EMIT archive — no large plume. Original analysis.** |
 | [docs/S2_DETECTOR.md](docs/S2_DETECTOR.md) | Our own Sentinel-2 detector: built, validated against controls, and found not to work — with why |
 | [docs/BUILD_PLAN.md](docs/BUILD_PLAN.md) | Vision, phases, agent task breakdown, acceptance criteria, open decisions |
 | [docs/DATA_SOURCES.md](docs/DATA_SOURCES.md) | Verified catalog of every data source (access, license, cadence) |
