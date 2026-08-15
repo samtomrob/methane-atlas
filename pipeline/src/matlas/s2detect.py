@@ -93,7 +93,14 @@ RECURRENCE_RADIUS_KM = 0.25
 #    anomalies across a whole scene at once. A scene yielding more than this
 #    many clusters is contaminated and is discarded entirely rather than
 #    contributing its least-bad candidates.
-MAX_CLUSTERS_PER_SCENE = 8
+#
+#    Counted on RAW clusters, before the physical gate. Counting survivors
+#    instead made the two filters fight each other: tightening the physics
+#    dropped per-scene survivor counts below the limit, which quietly
+#    readmitted contaminated scenes and *raised* the candidate count from 5 to
+#    15 at Hides. Contamination is a property of the scene, not of how many
+#    clusters happen to survive a later test.
+MAX_RAW_CLUSTERS_PER_SCENE = 15
 
 # Scenes cloudier than this are not worth opening.
 MAX_CLOUD_PCT = 60.0
@@ -474,8 +481,19 @@ def detect_site(
 
         threshold = median - SIGMA_K * sigma
         mask = np.isfinite(dr) & (dr < threshold)
+        clusters = _label_clusters(mask, MIN_PLUME_PIXELS)
+
+        # Judge scene contamination on the raw cluster count, before physics.
+        if len(clusters) > MAX_RAW_CLUSTERS_PER_SCENE:
+            if verbose:
+                print(
+                    f"    x {scene['start'][:10]}: {len(clusters)} raw clusters — "
+                    f"scene discarded as contaminated"
+                )
+            continue
+
         scene_hits: list[Detection] = []
-        for cells in _label_clusters(mask, MIN_PLUME_PIXELS):
+        for cells in clusters:
             rows, cols = cells[:, 0], cells[:, 1]
             vals = dr[rows, cols]
             mean_b11 = float(np.nanmean(d_b11[rows, cols]))
@@ -510,14 +528,6 @@ def detect_site(
                 )
             )
 
-        # A scene lit up all over is contaminated, not prolific.
-        if len(scene_hits) > MAX_CLUSTERS_PER_SCENE:
-            if verbose:
-                print(
-                    f"    x {scene['start'][:10]}: {len(scene_hits)} clusters — "
-                    f"scene discarded as contaminated"
-                )
-            continue
         detections.extend(scene_hits)
 
     before_transience = len(detections)
