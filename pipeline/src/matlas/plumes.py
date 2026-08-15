@@ -555,9 +555,42 @@ def run(out_path: Path, data_dir: Path) -> dict[str, Any]:
         encoding="utf-8",
     )
 
+    # Freshness, and what is new since the last run. Both are surfaced in the
+    # UI and drive the alert feed: providers publish on a ~30-day delay, so the
+    # useful signal is not "is this live" but "what arrived since I last looked".
+    previous_ids: set[str] = set()
+    state_path = out_path.parent / "plumes_seen.json"
+    if state_path.exists():
+        try:
+            previous_ids = set(json.loads(state_path.read_text()).get("ids", []))
+        except (ValueError, OSError):
+            previous_ids = set()
+    current_ids = {p.plume_id for p in plumes}
+    new_ids = current_ids - previous_ids if previous_ids else set()
+
+    def _age_days(p: Plume) -> int | None:
+        raw = (p.datetime_utc or "")[:10]
+        try:
+            return (dt.date.today() - dt.date.fromisoformat(raw)).days
+        except ValueError:
+            return None
+
+    ages = [(a, p) for p in plumes if (a := _age_days(p)) is not None]
+    newest_age, newest_plume = min(ages, key=lambda t: t[0]) if ages else (None, None)
+
+    new_plumes = sorted(
+        (p for p in plumes if p.plume_id in new_ids),
+        key=lambda p: p.emission_kg_hr or 0,
+        reverse=True,
+    )
+
     summary = {
         "generated_at": dt.datetime.now(dt.timezone.utc).isoformat(timespec="seconds"),
         "count": len(plumes),
+        "newest_detection": newest_plume.datetime_utc if newest_plume else None,
+        "newest_days_old": newest_age,
+        "new_since_last_run": len(new_plumes),
+        "first_run": not previous_ids,
         "by_provider": status,
         "near_infrastructure": near,
         "near_facility": at_facility,
@@ -574,5 +607,40 @@ def run(out_path: Path, data_dir: Path) -> dict[str, Any]:
         ),
     }
     (out_path.parent / "plumes_status.json").write_text(json.dumps(summary, indent=2), encoding="utf-8")
+
+    # The alert feed: what appeared this run, richest first. Consumed by the
+    # scheduled job to decide whether anything is worth notifying about.
+    feed = {
+        "generated_at": summary["generated_at"],
+        "first_run": summary["first_run"],
+        "new_count": len(new_plumes),
+        "new_plumes": [
+            {
+                "plume_id": p.plume_id,
+                "provider": p.provider,
+                "datetime_utc": p.datetime_utc,
+                "lon": p.lon,
+                "lat": p.lat,
+                "emission_kg_hr": p.emission_kg_hr,
+                "sector": p.sector,
+                "nearest_facility": p.facility_name,
+                "facility_km": p.facility_km,
+                "provider_url": p.provider_url,
+            }
+            for p in new_plumes[:100]
+        ],
+    }
+    (out_path.parent / "plumes_new.json").write_text(json.dumps(feed, indent=2), encoding="utf-8")
+    state_path.write_text(
+        json.dumps({"updated": summary["generated_at"], "ids": sorted(current_ids)}),
+        encoding="utf-8",
+    )
+
+    if newest_age is not None:
+        print(f"newest detection {newest_age} days old ({newest_plume.datetime_utc[:10]})")
+    if previous_ids:
+        print(f"new since last run: {len(new_plumes)}")
+    else:
+        print("first run — baseline recorded, no alerts emitted")
     print(f"-> {out_path}")
     return summary

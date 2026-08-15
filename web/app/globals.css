@@ -154,6 +154,33 @@ body {
 }
 .period b { color: var(--ink); font-size: 0.86rem; font-variant-numeric: tabular-nums; }
 
+.agerow {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  font-size: 0.78rem;
+  color: var(--muted);
+  margin-top: 8px;
+}
+.agerow b { color: var(--ink); font-variant-numeric: tabular-nums; }
+
+.freshness {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  font-size: 0.74rem;
+  padding: 6px 9px;
+  border-radius: 5px;
+  background: color-mix(in srgb, var(--accent) 10%, var(--surface));
+  border: 1px solid color-mix(in srgb, var(--accent) 25%, var(--line));
+  margin-bottom: 8px;
+}
+.freshness b { color: var(--ink); }
+.freshness .dot {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: var(--accent); flex: none; align-self: center;
+}
+
 .caveat {
   margin: 8px 0 0;
   font-size: 0.7rem;

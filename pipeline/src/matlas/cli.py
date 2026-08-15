@@ -98,6 +98,22 @@ def main(argv: list[str] | None = None) -> None:
         help="output GeoJSON",
     )
 
+    p_assets = sub.add_parser(
+        "plume-assets",
+        help="download per-plume concentration imagery and attach wind context",
+    )
+    p_assets.add_argument(
+        "--plumes",
+        type=Path,
+        default=REPO_ROOT / "web" / "public" / "data" / "plumes.geojson",
+    )
+    p_assets.add_argument(
+        "--assets",
+        type=Path,
+        default=REPO_ROOT / "web" / "public" / "data" / "plume-imagery",
+    )
+    p_assets.add_argument("--limit", type=int, default=200, help="newest N plumes to fetch imagery for")
+
     p_emit = sub.add_parser(
         "emit-scan",
         help="read the existing EMIT methane archive over PNG facilities (observability audit)",
@@ -183,6 +199,10 @@ def main(argv: list[str] | None = None) -> None:
             max_scenes=args.max_scenes,
             only=args.site,
         )
+    elif args.command == "plume-assets":
+        from . import plumeassets
+
+        plumeassets.run(args.plumes, args.assets, limit=args.limit)
     elif args.command == "emit-scan":
         from . import emitscan
         from .s2detect import PNG_SITES

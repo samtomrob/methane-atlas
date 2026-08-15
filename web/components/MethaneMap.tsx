@@ -57,17 +57,45 @@ const PROVIDER_LABEL: Record<string, string> = {
   SRON: "SRON",
 };
 
+const COMPASS = ["N", "NE", "E", "SE", "S", "SW", "W", "NW"];
+
+function windArrowSvg(towardDeg: number): string {
+  // Arrow points the way the plume drifts, so it can be read against the raster.
+  return (
+    `<svg width="34" height="34" viewBox="0 0 34 34" style="vertical-align:middle">` +
+    `<g transform="rotate(${towardDeg} 17 17)">` +
+    `<line x1="17" y1="27" x2="17" y2="8" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>` +
+    `<path d="M17 5 L22 14 L17 11.5 L12 14 Z" fill="currentColor"/>` +
+    `</g></svg>`
+  );
+}
+
+function daysAgo(iso: string): number | null {
+  const d = Date.parse(iso);
+  if (Number.isNaN(d)) return null;
+  return Math.floor((Date.now() - d) / 86400000);
+}
+
 function plumePopupHtml(props: Record<string, unknown>): string {
   const rate = props.emission_kg_hr;
   const unc = props.uncertainty_kg_hr;
   const when = String(props.datetime_utc ?? "").slice(0, 10);
   const provider = String(props.provider ?? "");
+  const age = daysAgo(String(props.datetime_utc ?? ""));
   const rows: string[] = [];
   if (rate != null) {
     rows.push(
       `Emission rate: <b>${Number(rate).toLocaleString(undefined, {
         maximumFractionDigits: 0,
       })} kg/hr</b>${unc != null ? ` ± ${Number(unc).toFixed(0)}` : ""}`,
+    );
+  }
+  if (props.wind_speed_ms != null && props.plume_toward_deg != null) {
+    const toward = Number(props.plume_toward_deg);
+    const oct = COMPASS[Math.floor(((toward + 22.5) % 360) / 45)];
+    rows.push(
+      `Wind: <b>${Number(props.wind_speed_ms).toFixed(1)} m/s</b>, plume drifting <b>${esc(oct)}</b>` +
+        `<span style="float:right;line-height:0">${windArrowSvg(toward)}</span>`,
     );
   }
   if (props.sector) rows.push(`Sector: <b>${esc(props.sector)}</b>`);
@@ -94,9 +122,13 @@ function plumePopupHtml(props: Record<string, unknown>): string {
   const link = props.provider_url
     ? `<br/><a href="${esc(props.provider_url)}" target="_blank" rel="noreferrer">View at ${esc(provider)}</a>`
     : "";
+  const ageLabel = age == null ? "" : age < 1 ? " · today" : ` · ${age} days ago`;
+  const imagery = props.imagery
+    ? `<div style="margin-top:6px;font-size:.72rem;opacity:.8">Concentration imagery shown on the map.</div>`
+    : "";
   return (
-    `<div class="popup-title">${esc(PROVIDER_LABEL[provider] ?? provider)} plume — ${esc(when)}</div>` +
-    `<div class="popup-kv">${rows.join("<br/>")}${link}</div>`
+    `<div class="popup-title">${esc(PROVIDER_LABEL[provider] ?? provider)} plume — ${esc(when)}${esc(ageLabel)}</div>` +
+    `<div class="popup-kv">${rows.join("<br/>")}${link}</div>${imagery}`
   );
 }
 
@@ -132,6 +164,36 @@ function popupHtml(props: Record<string, unknown>): string {
   return `<div class="popup-title">${esc(props.name ?? "(unnamed)")}</div><div class="popup-kv">${rows}${src}</div>`;
 }
 
+/** Drape the selected plume's concentration raster at its own bounds.
+ *
+ * Carbon Mapper publishes the raster plus `plume_bounds`, so the detection can
+ * be shown as what it actually looked like rather than as a dot. The scene
+ * backdrop goes underneath, the concentration on top.
+ */
+function showPlumeImagery(map: MLMap, props: Record<string, unknown>) {
+  const bounds = props.imagery_bounds as [number, number, number, number] | undefined;
+  const imagery = props.imagery as Record<string, string> | undefined;
+  const clear = () => {
+    for (const id of ["plume-raster", "plume-backdrop"]) {
+      if (map.getLayer(id)) map.removeLayer(id);
+      if (map.getSource(id)) map.removeSource(id);
+    }
+  };
+  clear();
+  if (!bounds || !imagery) return;
+
+  const coords = imageCoords(bounds);
+  const add = (id: string, file: string, opacity: number, beforeId?: string) => {
+    map.addSource(id, { type: "image", url: `/data/plume-imagery/${file}`, coordinates: coords });
+    map.addLayer(
+      { id, type: "raster", source: id, paint: { "raster-opacity": opacity, "raster-fade-duration": 0 } },
+      beforeId,
+    );
+  };
+  if (imagery.rgb_png) add("plume-backdrop", imagery.rgb_png, 0.9, "plumes");
+  if (imagery.plume_png) add("plume-raster", imagery.plume_png, 0.95, "plumes");
+}
+
 // MapLibre image sources take corners clockwise from top-left.
 function imageCoords(b: [number, number, number, number]) {
   const [w, s, e, n] = b;
@@ -156,12 +218,22 @@ export default function MethaneMap() {
   const visibleRef = useRef(visible);
   const [counts, setCounts] = useState<Record<string, number>>({});
   const [showPlumes, setShowPlumes] = useState(true);
+  // Recency window. The data itself is weeks-to-months old by provider policy,
+  // so the default opens wide enough to actually contain something.
+  const AGE_STEPS = [30, 90, 180, 365, 730, 9999];
+  const [ageIdx, setAgeIdx] = useState(3);
+  const [plumeCounts, setPlumeCounts] = useState<{ total: number; shown: number }>({
+    total: 0,
+    shown: 0,
+  });
   const [plumeStatus, setPlumeStatus] = useState<{
     count: number;
     near_infrastructure: number;
     near_facility?: number;
     high_confidence: number;
     by_provider: Record<string, string>;
+    newest_days_old?: number;
+    newest_detection?: string;
   } | null>(null);
   const dark =
     typeof window !== "undefined" && window.matchMedia("(prefers-color-scheme: dark)").matches;
@@ -244,10 +316,12 @@ export default function MethaneMap() {
       map.on("click", "plumes", (e: MapMouseEvent & { features?: maplibregl.MapGeoJSONFeature[] }) => {
         const f = e.features?.[0];
         if (!f) return;
+        const props = f.properties ?? {};
         new maplibregl.Popup({ closeButton: true, maxWidth: "300px" })
           .setLngLat(e.lngLat)
-          .setHTML(plumePopupHtml(f.properties ?? {}))
+          .setHTML(plumePopupHtml(props))
           .addTo(map);
+        showPlumeImagery(map, props);
       });
       map.on("mouseenter", "plumes", () => (map.getCanvas().style.cursor = "pointer"));
       map.on("mouseleave", "plumes", () => (map.getCanvas().style.cursor = ""));
@@ -309,6 +383,47 @@ export default function MethaneMap() {
     }
     map.setLayoutProperty("methane", "visibility", showMethane ? "visible" : "none");
   }, [ready, manifest, period, view, showMethane]);
+
+  // Plume timestamps, loaded once, so moving the slider is instant rather than
+  // refetching a 480 KB collection on every step.
+  const plumeAges = useRef<number[] | null>(null);
+  useEffect(() => {
+    fetch("/data/plumes.geojson")
+      .then((r) => (r.ok ? r.json() : null))
+      .then((g) => {
+        if (!g) return;
+        plumeAges.current = g.features
+          .map((f: { properties: { datetime_utc?: string } }) =>
+            Date.parse(f.properties.datetime_utc ?? ""),
+          )
+          .filter((t: number) => !Number.isNaN(t));
+        setAgeIdx((i) => i); // recompute counts once ages are known
+      })
+      .catch(() => {});
+  }, []);
+
+  // Recency filter. Provider timestamps are all ISO-prefixed, so a lexicographic
+  // comparison against a YYYY-MM-DD cutoff is exact and needs no reprocessing.
+  useEffect(() => {
+    const map = mapRef.current;
+    const days = AGE_STEPS[ageIdx];
+    if (ready && map?.getLayer("plumes")) {
+      if (days >= 9999) {
+        map.setFilter("plumes", null);
+      } else {
+        const cutoff = new Date(Date.now() - days * 86400000).toISOString().slice(0, 10);
+        map.setFilter("plumes", [">=", ["get", "datetime_utc"], cutoff]);
+      }
+    }
+    const ages = plumeAges.current;
+    if (ages) {
+      const cutoffMs = Date.now() - days * 86400000;
+      setPlumeCounts({
+        total: ages.length,
+        shown: days >= 9999 ? ages.length : ages.filter((t) => t >= cutoffMs).length,
+      });
+    }
+  }, [ready, ageIdx, plumeStatus]);
 
   const toggle = useCallback(
     (id: string) => {
@@ -420,6 +535,15 @@ export default function MethaneMap() {
         {plumeStatus && plumeStatus.count > 0 ? (
           <>
             <div className="section-label">Point sources</div>
+            {plumeStatus.newest_days_old != null ? (
+              <div className="freshness">
+                <span className="dot" />
+                <span>
+                  Newest detection <b>{plumeStatus.newest_days_old} days old</b>. Providers hold
+                  plumes back ~30 days before publishing, so this is as current as the data gets.
+                </span>
+              </div>
+            ) : null}
             <label className="layer-toggle">
               <input
                 type="checkbox"
@@ -440,11 +564,36 @@ export default function MethaneMap() {
               Detected plumes
               <span className="count">{plumeStatus.count}</span>
             </label>
+            <div className="agerow">
+              <span>Detected within</span>
+              <b>
+                {AGE_STEPS[ageIdx] >= 9999
+                  ? "all time"
+                  : AGE_STEPS[ageIdx] >= 365
+                    ? `${AGE_STEPS[ageIdx] / 365} year${AGE_STEPS[ageIdx] > 365 ? "s" : ""}`
+                    : `${AGE_STEPS[ageIdx]} days`}
+              </b>
+            </div>
+            <input
+              className="slider"
+              type="range"
+              min={0}
+              max={AGE_STEPS.length - 1}
+              value={ageIdx}
+              onChange={(e) => setAgeIdx(Number(e.target.value))}
+              aria-label="Detection recency window"
+            />
+            <div className="period">
+              <span>
+                showing <b>{plumeCounts.shown.toLocaleString()}</b> of{" "}
+                {plumeCounts.total.toLocaleString()} plumes
+              </span>
+            </div>
             <p className="caveat">
               {plumeStatus.near_facility ?? plumeStatus.near_infrastructure} of{" "}
               {plumeStatus.count} sit within 10 km of a mine or gas plant. Circle size shows the
-              measured emission rate — an instantaneous snapshot, not an annual total. Click any
-              plume for details.
+              measured emission rate — an instantaneous snapshot, not an annual total. Click a
+              plume to see its concentration image and wind.
             </p>
           </>
         ) : null}

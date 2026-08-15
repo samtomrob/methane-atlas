@@ -1,0 +1,88 @@
+name: daily plume refresh
+
+# Providers publish on a ~30-day delay, so nothing here is real-time. What this
+# does is notice the moment new detections land and push them straight to the
+# live map, then raise an issue so it reaches you without having to check.
+on:
+  schedule:
+    - cron: "0 19 * * *" # 05:00 AEST
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  issues: write
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v4
+
+      - name: Install pipeline
+        run: uv sync
+        working-directory: pipeline
+
+      - name: Fetch plumes from every provider
+        working-directory: pipeline
+        env:
+          CARBON_MAPPER_TOKEN: ${{ secrets.CARBON_MAPPER_TOKEN }}
+          CARBON_MAPPER_EMAIL: ${{ secrets.CARBON_MAPPER_EMAIL }}
+          CARBON_MAPPER_PASSWORD: ${{ secrets.CARBON_MAPPER_PASSWORD }}
+          EARTHDATA_TOKEN: ${{ secrets.EARTHDATA_TOKEN }}
+        run: uv run matlas plumes
+
+      - name: Fetch imagery and wind for the newest detections
+        working-directory: pipeline
+        continue-on-error: true # imagery is a bonus; never fail the refresh over it
+        env:
+          CARBON_MAPPER_TOKEN: ${{ secrets.CARBON_MAPPER_TOKEN }}
+          CARBON_MAPPER_EMAIL: ${{ secrets.CARBON_MAPPER_EMAIL }}
+          CARBON_MAPPER_PASSWORD: ${{ secrets.CARBON_MAPPER_PASSWORD }}
+        run: uv run matlas plume-assets --limit 200
+
+      - name: Read what changed
+        id: changes
+        run: |
+          FEED=web/public/data/plumes_new.json
+          echo "new_count=$(jq -r '.new_count // 0' $FEED)" >> "$GITHUB_OUTPUT"
+          echo "first_run=$(jq -r '.first_run // false' $FEED)" >> "$GITHUB_OUTPUT"
+          echo "newest_age=$(jq -r '.newest_days_old // "?"' web/public/data/plumes_status.json)" >> "$GITHUB_OUTPUT"
+
+      - name: Publish to the live map
+        run: |
+          git config user.name  "methane-atlas-bot"
+          git config user.email "actions@github.com"
+          git add web/public/data
+          if git diff --cached --quiet; then
+            echo "nothing changed"
+          else
+            git commit -m "Daily plume refresh: ${{ steps.changes.outputs.new_count }} new detection(s)"
+            git push
+          fi
+
+      - name: Raise an alert for new detections
+        if: steps.changes.outputs.new_count != '0' && steps.changes.outputs.first_run != 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          FEED=web/public/data/plumes_new.json
+          {
+            echo "**${{ steps.changes.outputs.new_count }} new methane detection(s)** published since the last check."
+            echo
+            echo "Newest detection in the archive is ${{ steps.changes.outputs.newest_age }} days old — providers hold plumes back around 30 days, so this is as current as the data gets."
+            echo
+            echo "| when | rate kg/hr | nearest facility | km | provider |"
+            echo "|---|---|---|---|---|"
+            jq -r '.new_plumes[:25][] |
+              "| \(.datetime_utc[0:10]) | \(if .emission_kg_hr then (.emission_kg_hr|floor|tostring) else "—" end) | \(.nearest_facility // "—") | \(.facility_km // "—") | \(.provider) |"' $FEED
+            echo
+            echo "Live map: https://methane-atlas.vercel.app"
+          } > body.md
+          gh issue create \
+            --title "New methane detections: ${{ steps.changes.outputs.new_count }} ($(date -u +%Y-%m-%d))" \
+            --body-file body.md \
+            --label "detection" \
+          || gh issue create \
+            --title "New methane detections: ${{ steps.changes.outputs.new_count }} ($(date -u +%Y-%m-%d))" \
+            --body-file body.md
