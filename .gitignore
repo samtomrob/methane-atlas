@@ -19,6 +19,13 @@ web/.next/
 web/out/
 web/next-env.d.ts
 
+# desktop build output — a 32 MB binary rebuilt by desktop/build.ps1 from
+# sources that are tracked. The icon IS tracked, since it is generated once
+# and needed by the spec.
+build/
+dist/
+*.exe
+
 # local data staging at repo root only (published artifacts live in object
 # storage, not git; the small v0 GeoJSONs in web/public/data ARE committed)
 /data/
