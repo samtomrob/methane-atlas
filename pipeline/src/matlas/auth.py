@@ -7,6 +7,9 @@ that mints fine can still be unauthorized to fetch product bytes.
 
 from __future__ import annotations
 
+import base64
+import datetime as dt
+import json
 from dataclasses import dataclass
 from typing import Callable
 
@@ -259,6 +262,40 @@ def gee_login() -> int:
     return 0
 
 
+def token_expiry(token: str | None) -> dt.datetime | None:
+    """Expiry of a JWT, read from its unsigned payload.
+
+    Worth surfacing because these tokens are short-lived and a working
+    credential today says nothing about tomorrow — a Carbon Mapper access token
+    runs days, not months, so unattended jobs die quietly unless the expiry is
+    visible before it bites.
+    """
+    if not token or token.count(".") < 2:
+        return None
+    payload = token.split(".")[1]
+    payload += "=" * (-len(payload) % 4)
+    try:
+        claims = json.loads(base64.urlsafe_b64decode(payload))
+    except Exception:
+        return None
+    exp = claims.get("exp")
+    if not isinstance(exp, (int, float)):
+        return None
+    return dt.datetime.fromtimestamp(exp, dt.timezone.utc)
+
+
+def _expiry_note(token: str | None) -> str:
+    when = token_expiry(token)
+    if not when:
+        return ""
+    days = (when - dt.datetime.now(dt.timezone.utc)).days
+    if days < 0:
+        return f" — EXPIRED {when:%Y-%m-%d}"
+    if days <= 7:
+        return f" — expires in {days} day{'s' if days != 1 else ''} ({when:%Y-%m-%d})"
+    return f" — valid {days} more days"
+
+
 def _check_bearer(service: str, cred: config.Credential, url: str, header: dict[str, str]) -> Result:
     if not cred.ready:
         return Result(service, SKIP, f"missing {', '.join(cred.missing)}")
@@ -266,10 +303,13 @@ def _check_bearer(service: str, cred: config.Credential, url: str, header: dict[
         r = httpx.get(url, headers=header, timeout=45, follow_redirects=True)
     except httpx.HTTPError as e:
         return Result(service, FAIL, f"network error ({type(e).__name__})")
+    token = next(
+        (v.split(" ", 1)[-1] for k, v in header.items() if k.lower() == "authorization"), None
+    ) or next(iter(header.values()), None)
     if r.status_code == 200:
-        return Result(service, OK, "token accepted")
+        return Result(service, OK, f"token accepted{_expiry_note(token)}")
     if r.status_code in (401, 403):
-        return Result(service, FAIL, f"token rejected ({r.status_code})")
+        return Result(service, FAIL, f"token rejected ({r.status_code}){_expiry_note(token)}")
     return Result(service, FAIL, f"unexpected status {r.status_code}")
 
 
@@ -356,6 +396,26 @@ def run() -> int:
     ready = sum(1 for r in results if r.status == OK)
     skipped = sum(1 for r in results if r.status == SKIP)
     print(f"\n{ready} ready · {failed} failing · {skipped} not configured yet")
+
+    # A credential that works locally is not the same as automation that keeps
+    # working: GitHub Actions cannot read .env, and short-lived tokens die.
+    expiring = [
+        (name, token_expiry(config.get(name)))
+        for name in ("CARBON_MAPPER_TOKEN", "EARTHDATA_TOKEN", "GFW_API_KEY")
+    ]
+    soon = [
+        (n, w) for n, w in expiring
+        if w and (w - dt.datetime.now(dt.timezone.utc)).days <= 14
+    ]
+    if soon:
+        print("\nExpiring soon:")
+        for name, when in soon:
+            days = (when - dt.datetime.now(dt.timezone.utc)).days
+            print(f"  {name} expires {when:%Y-%m-%d} ({days} days)")
+        print(
+            "  For unattended runs prefer credentials that refresh themselves —\n"
+            "  CARBON_MAPPER_EMAIL + CARBON_MAPPER_PASSWORD mint a fresh token each run."
+        )
     if failed:
         print("See docs/CREDENTIALS.md for the exact setup steps for any failing service.")
     return 1 if failed else 0
