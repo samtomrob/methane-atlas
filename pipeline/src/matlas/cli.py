@@ -29,6 +29,15 @@ def main(argv: list[str] | None = None) -> None:
         help="verify configured credentials actually work (never prints secret values)",
     )
 
+    p_sync = sub.add_parser(
+        "sync-secrets",
+        help="copy the credentials in .env up to GitHub Actions secrets",
+    )
+    p_sync.add_argument("--repo", default=None, help="owner/name (defaults to this checkout)")
+    p_sync.add_argument(
+        "--dry-run", action="store_true", help="show what would be set, change nothing"
+    )
+
     sub.add_parser(
         "gee-login",
         help="sign in to Earth Engine interactively (optional; unused by default)",
@@ -195,6 +204,10 @@ def main(argv: list[str] | None = None) -> None:
         from . import auth
 
         sys.exit(auth.run())
+    elif args.command == "sync-secrets":
+        from . import syncsecrets
+
+        sys.exit(syncsecrets.run(repo=args.repo, dry_run=args.dry_run))
     elif args.command == "gee-login":
         from . import auth
 
