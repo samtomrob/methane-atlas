@@ -242,16 +242,37 @@ def enrich(plumes_path: Path, assets_dir: Path, limit_wind: int = 400) -> dict[s
 
     order = sorted(range(len(feats)), key=lambda i: when(feats[i]), reverse=True)
 
+    # Nested shapes from an earlier version. MapLibre cannot read them, and
+    # enrichment only ever adds keys, so they would sit in the published layer
+    # indefinitely inviting someone to use a field that never worked.
+    LEGACY = ("imagery", "imagery_bounds")
+
     matched = winded = 0
     with httpx.Client(headers=UA, timeout=90, follow_redirects=True) as client:
         for rank, i in enumerate(order):
             props = feats[i]["properties"]
+            for dead in LEGACY:
+                props.pop(dead, None)
             raw_id = str(props.get("plume_id", ""))
             pid = raw_id.split(":", 1)[1] if ":" in raw_id else raw_id
             entry = imagery.get(pid)
             if entry:
-                props["imagery"] = entry["assets"]
-                props["imagery_bounds"] = entry["bounds"]
+                # Flat strings and numbers only.
+                #
+                # MapLibre's GeoJSON sources support string and numeric feature
+                # properties and nothing else — objects and arrays do not
+                # survive the trip to a click handler. Writing the filenames as
+                # a dict and the bounds as an array meant the map could never
+                # read them back, so the plume rasters silently never drew.
+                assets = entry["assets"]
+                if assets.get("plume_png"):
+                    props["img_plume"] = assets["plume_png"]
+                if assets.get("rgb_png"):
+                    props["img_rgb"] = assets["rgb_png"]
+                w, s, e, n = entry["bounds"]
+                props["img_w"], props["img_s"] = w, s
+                props["img_e"], props["img_n"] = e, n
+                props["has_imagery"] = 1
                 matched += 1
             if rank < limit_wind and props.get("datetime_utc"):
                 lon, lat = feats[i]["geometry"]["coordinates"][:2]

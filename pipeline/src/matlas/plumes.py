@@ -582,6 +582,10 @@ def run(out_path: Path, data_dir: Path) -> dict[str, Any]:
     features = []
     for p in plumes:
         props = {k: v for k, v in asdict(p).items() if k not in ("lon", "lat") and v not in (None, [], "")}
+        # MapLibre GeoJSON sources carry strings and numbers only; a list here
+        # is invisible to the map, so join it rather than shipping dead weight.
+        if isinstance(props.get("notes"), list):
+            props["notes"] = "; ".join(str(n) for n in props["notes"])
         features.append(
             {
                 "type": "Feature",

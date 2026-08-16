@@ -216,8 +216,8 @@ function plumePopupHtml(props: Record<string, unknown>): string {
     ? `<br/><a href="${esc(props.provider_url)}" target="_blank" rel="noreferrer">View at ${esc(provider)}</a>`
     : "";
   const ageLabel = age == null ? "" : age < 1 ? " · today" : ` · ${age} days ago`;
-  const imagery = props.imagery
-    ? `<div style="margin-top:6px;font-size:.72rem;opacity:.8">Concentration imagery shown on the map.</div>`
+  const imagery = props.img_plume
+    ? `<div style="margin-top:6px;font-size:.72rem;opacity:.8">Concentration imagery drawn on the map — the view has zoomed to it.</div>`
     : "";
   return (
     `<div class="popup-title">${esc(PROVIDER_LABEL[provider] ?? provider)} plume — ${esc(when)}${esc(ageLabel)}</div>` +
@@ -269,8 +269,6 @@ function popupHtml(props: Record<string, unknown>): string {
  * backdrop goes underneath, the concentration on top.
  */
 function showPlumeImagery(map: MLMap, props: Record<string, unknown>) {
-  const bounds = props.imagery_bounds as [number, number, number, number] | undefined;
-  const imagery = props.imagery as Record<string, string> | undefined;
   const clear = () => {
     for (const id of ["plume-raster", "plume-backdrop"]) {
       if (map.getLayer(id)) map.removeLayer(id);
@@ -278,18 +276,30 @@ function showPlumeImagery(map: MLMap, props: Record<string, unknown>) {
     }
   };
   clear();
-  if (!bounds || !imagery) return;
 
-  const coords = imageCoords(bounds);
+  // Flat properties, because MapLibre GeoJSON sources carry only strings and
+  // numbers — an earlier version read a nested object and an array here, which
+  // arrive undefined and meant the raster never appeared.
+  const num = (v: unknown) => (typeof v === "number" ? v : Number(v));
+  const w = num(props.img_w);
+  const s = num(props.img_s);
+  const e = num(props.img_e);
+  const n = num(props.img_n);
+  if (![w, s, e, n].every(Number.isFinite)) return;
+
+  const coords = imageCoords([w, s, e, n]);
   const add = (id: string, file: string, opacity: number, beforeId?: string) => {
     map.addSource(id, { type: "image", url: `/data/plume-imagery/${file}`, coordinates: coords });
     map.addLayer(
       { id, type: "raster", source: id, paint: { "raster-opacity": opacity, "raster-fade-duration": 0 } },
-      beforeId,
+      map.getLayer(beforeId ?? "") ? beforeId : undefined,
     );
   };
-  if (imagery.rgb_png) add("plume-backdrop", imagery.rgb_png, 0.9, "plumes");
-  if (imagery.plume_png) add("plume-raster", imagery.plume_png, 0.95, "plumes");
+  if (props.img_rgb) add("plume-backdrop", String(props.img_rgb), 0.9, "plumes");
+  if (props.img_plume) add("plume-raster", String(props.img_plume), 0.95, "plumes");
+
+  // Frame the plume so the raster is actually visible rather than a speck.
+  map.fitBounds([[w, s], [e, n]], { padding: 140, maxZoom: 14, duration: 700 });
 }
 
 // MapLibre image sources take corners clockwise from top-left.
@@ -439,8 +449,55 @@ export default function MethaneMap() {
           .addTo(map);
         showPlumeImagery(map, props);
       });
+      // A plume carrying a concentration raster is worth clicking; nothing on
+      // the map said so, so the imagery went unnoticed. Ring those detections.
+      map.addLayer({
+        id: "plumes-imagery-ring",
+        type: "circle",
+        source: "plumes",
+        filter: ["==", ["get", "has_imagery"], 1],
+        paint: {
+          "circle-color": "rgba(0,0,0,0)",
+          "circle-radius": ["interpolate", ["linear"], ["zoom"], 3, 6, 9, 20],
+          "circle-stroke-width": 1.6,
+          "circle-stroke-color": dark ? "#ffd6e5" : "#c2255c",
+          "circle-stroke-opacity": 0.75,
+        },
+      });
+
+      // Wind direction on the map itself, not only in a popup. A plume points
+      // downwind, so the arrow is the quickest check that a detection is
+      // physically sensible.
+      map.addLayer({
+        id: "plumes-wind",
+        type: "symbol",
+        source: "plumes",
+        filter: ["has", "plume_toward_deg"],
+        minzoom: 7,
+        layout: {
+          "text-field": "➤",
+          "text-size": ["interpolate", ["linear"], ["zoom"], 7, 12, 12, 20],
+          // The glyph points east at 0°, and bearings are clockwise from north.
+          "text-rotate": ["-", ["get", "plume_toward_deg"], 90],
+          "text-rotation-alignment": "map",
+          "text-allow-overlap": true,
+          "text-offset": [0, 0],
+          "text-ignore-placement": true,
+        },
+        paint: {
+          "text-color": dark ? "#ffd6e5" : "#c2255c",
+          "text-opacity": 0.85,
+          "text-halo-color": dark ? "#0e1519" : "#ffffff",
+          "text-halo-width": 1.2,
+        },
+      });
+
       map.on("mouseenter", "plumes", () => (map.getCanvas().style.cursor = "pointer"));
       map.on("mouseleave", "plumes", () => (map.getCanvas().style.cursor = ""));
+
+      // Debug handle. MapLibre keeps no global reference, and without one an
+      // "it doesn't render" report cannot be reproduced from the console.
+      (window as unknown as { __map?: MLMap }).__map = map;
 
       setReady(true);
     });
@@ -529,11 +586,24 @@ export default function MethaneMap() {
     const map = mapRef.current;
     const days = AGE_STEPS[ageIdx];
     if (ready && map?.getLayer("plumes")) {
-      if (days >= 9999) {
-        map.setFilter("plumes", null);
-      } else {
-        const cutoff = new Date(Date.now() - days * 86400000).toISOString().slice(0, 10);
-        map.setFilter("plumes", [">=", ["get", "datetime_utc"], cutoff]);
+      const cutoff =
+        days >= 9999 ? null : new Date(Date.now() - days * 86400000).toISOString().slice(0, 10);
+      const recent = cutoff
+        ? ([">=", ["get", "datetime_utc"], cutoff] as maplibregl.FilterSpecification)
+        : null;
+      // Every plume-derived layer moves together, or the imagery rings and
+      // wind arrows keep marking detections the slider has already hidden.
+      map.setFilter("plumes", recent);
+      const derived: [string, maplibregl.FilterSpecification][] = [
+        ["plumes-imagery-ring", ["==", ["get", "has_imagery"], 1]],
+        ["plumes-wind", ["has", "plume_toward_deg"]],
+      ];
+      for (const [id, own] of derived) {
+        if (!map.getLayer(id)) continue;
+        map.setFilter(
+          id,
+          recent ? (["all", own, recent] as maplibregl.FilterSpecification) : own,
+        );
       }
     }
     const ages = plumeAges.current;
