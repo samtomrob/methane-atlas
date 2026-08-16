@@ -117,19 +117,29 @@ def _centroid(geometry: dict[str, Any] | None) -> tuple[float, float] | None:
 
 
 def _carbon_mapper_token(client: httpx.Client) -> str | None:
-    token = config.get("CARBON_MAPPER_TOKEN")
-    if token:
-        return token
+    """Prefer the login over a stored token.
+
+    Carbon Mapper access tokens are extremely short-lived — a freshly minted one
+    was measured expiring the same day. Preferring a stored CARBON_MAPPER_TOKEN,
+    as this once did, means an unattended job picks up a credential that dies
+    within hours and then fails every morning. Where an email and password
+    exist they are used first, because they mint a fresh token on every run;
+    the stored token is only a fallback for setups that have nothing else.
+    """
     email = config.get("CARBON_MAPPER_EMAIL")
     password = config.get("CARBON_MAPPER_PASSWORD")
-    if not (email and password):
-        return None
-    r = client.post(
-        f"{CM_BASE}/token/pair", json={"email": email, "password": password}, timeout=60
-    )
-    if r.status_code != 200:
-        raise RuntimeError(f"token/pair returned {r.status_code}")
-    return r.json().get("access")
+    if email and password:
+        r = client.post(
+            f"{CM_BASE}/token/pair", json={"email": email, "password": password}, timeout=60
+        )
+        if r.status_code == 200:
+            minted = r.json().get("access")
+            if minted:
+                return minted
+        # Fall through to the stored token rather than failing outright — a
+        # changed password should degrade, not take the whole run down.
+        print(f"    (login failed with {r.status_code}; trying stored token)")
+    return config.get("CARBON_MAPPER_TOKEN")
 
 
 def fetch_carbon_mapper() -> tuple[list[Plume], str]:

@@ -77,16 +77,18 @@ def _make_transparent(path: Path) -> bool:
 
 
 def _token(client: httpx.Client) -> str | None:
-    tok = config.get("CARBON_MAPPER_TOKEN")
-    if tok:
-        return tok
+    """Login first, stored token only as fallback.
+
+    See plumes._carbon_mapper_token: Carbon Mapper access tokens can expire the
+    same day they are issued, so preferring a stored one breaks unattended runs
+    within hours.
+    """
     email, password = config.get("CARBON_MAPPER_EMAIL"), config.get("CARBON_MAPPER_PASSWORD")
-    if not (email and password):
-        return None
-    r = client.post(f"{CM}/token/pair", json={"email": email, "password": password}, timeout=60)
-    if r.status_code != 200:
-        return None
-    return r.json().get("access")
+    if email and password:
+        r = client.post(f"{CM}/token/pair", json={"email": email, "password": password}, timeout=60)
+        if r.status_code == 200 and r.json().get("access"):
+            return r.json()["access"]
+    return config.get("CARBON_MAPPER_TOKEN")
 
 
 def wind_at(lat: float, lon: float, when: str, client: httpx.Client) -> dict[str, Any] | None:
