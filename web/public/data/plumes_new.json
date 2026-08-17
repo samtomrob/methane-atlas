@@ -1,6 +1,55 @@
 {
-  "generated_at": "2026-08-16T19:24:09+00:00",
+  "generated_at": "2026-08-17T19:32:19+00:00",
   "first_run": false,
-  "new_count": 0,
-  "new_plumes": []
+  "new_count": 4,
+  "new_plumes": [
+    {
+      "plume_id": "sron:20260812--23.400-149.460",
+      "provider": "SRON",
+      "datetime_utc": "2026-08-12T03:54:41Z",
+      "lon": 149.46,
+      "lat": -23.4,
+      "emission_kg_hr": 52000.0,
+      "sector": null,
+      "nearest_facility": null,
+      "facility_km": null,
+      "provider_url": "https://www.sron.nl/en/pillars/science/earth/methane/methane-plume-maps/"
+    },
+    {
+      "plume_id": "sron:20260812--22.220-148.730",
+      "provider": "SRON",
+      "datetime_utc": "2026-08-12T03:55:16Z",
+      "lon": 148.73,
+      "lat": -22.22,
+      "emission_kg_hr": 38000.0,
+      "sector": null,
+      "nearest_facility": null,
+      "facility_km": null,
+      "provider_url": "https://www.sron.nl/en/pillars/science/earth/methane/methane-plume-maps/"
+    },
+    {
+      "plume_id": "sron:20260812--21.970-148.670",
+      "provider": "SRON",
+      "datetime_utc": "2026-08-12T03:55:16Z",
+      "lon": 148.67,
+      "lat": -21.97,
+      "emission_kg_hr": 24000.0,
+      "sector": null,
+      "nearest_facility": null,
+      "facility_km": null,
+      "provider_url": "https://www.sron.nl/en/pillars/science/earth/methane/methane-plume-maps/"
+    },
+    {
+      "plume_id": "sron:20260811--23.260-148.990",
+      "provider": "SRON",
+      "datetime_utc": "2026-08-11T04:13:36Z",
+      "lon": 148.99,
+      "lat": -23.26,
+      "emission_kg_hr": 13000.0,
+      "sector": null,
+      "nearest_facility": "Yarrabee",
+      "facility_km": 7.38,
+      "provider_url": "https://www.sron.nl/en/pillars/science/earth/methane/methane-plume-maps/"
+    }
+  ]
 }
