@@ -1,18 +1,18 @@
 {
-  "generated_at": "2026-08-20T19:35:21+00:00",
+  "generated_at": "2026-08-21T19:29:06+00:00",
   "first_run": false,
   "new_count": 1,
   "new_plumes": [
     {
-      "plume_id": "imeo:a86a81eb-c69d-4ed0-8aa0-d16052869d91",
+      "plume_id": "imeo:3ea59a22-ae98-42a2-b601-0005c4047ea0",
       "provider": "UNEP IMEO",
-      "datetime_utc": "2026-07-20T04:22:58",
-      "lon": 151.07,
-      "lat": -32.7,
-      "emission_kg_hr": 7000.0,
+      "datetime_utc": "2026-07-21T04:04:15",
+      "lon": 151.04,
+      "lat": -32.62,
+      "emission_kg_hr": 23000.0,
       "sector": "Coal",
-      "nearest_facility": "Bulga",
-      "facility_km": 4.02,
+      "nearest_facility": "Warkworth",
+      "facility_km": 1.32,
       "provider_url": "https://methanedata.unep.org/plumes"
     }
   ]
