@@ -1,18 +1,18 @@
 {
-  "generated_at": "2026-08-21T19:29:06+00:00",
-  "count": 807,
+  "generated_at": "2026-08-22T19:26:39+00:00",
+  "count": 809,
   "newest_detection": "2026-08-12T03:55:16Z",
-  "newest_days_old": 9,
-  "new_since_last_run": 1,
+  "newest_days_old": 10,
+  "new_since_last_run": 2,
   "first_run": false,
   "by_provider": {
     "Carbon Mapper": "372 plumes",
     "NASA EMIT": "11 plume complexes",
-    "UNEP IMEO": "494 in region (of 28,021 worldwide)",
+    "UNEP IMEO": "496 in region (of 28,079 worldwide)",
     "SRON": "70 detections from 85 weekly files"
   },
-  "near_infrastructure": 670,
-  "near_facility": 592,
+  "near_infrastructure": 672,
+  "near_facility": 594,
   "high_confidence": 124,
   "association_note": "Distance to the nearest mapped infrastructure. Proximity is not attribution \u2014 it indicates what is nearby, not what emitted.",
   "rate_note": "Each rate is an instantaneous snapshot at one overpass, in kg/hr. These must never be summed across plumes or extrapolated to annual totals: detections span several years, sample different moments, and are biased toward large, detectable events."
