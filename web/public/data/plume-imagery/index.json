@@ -1,4 +1,32 @@
 {
+ "tan20260724t013542c75s4001-A": {
+  "bounds": [
+   150.757584,
+   -33.899779,
+   150.794639,
+   -33.869017
+  ],
+  "datetime_utc": "2026-07-24T01:35:42.750Z",
+  "emission_kg_hr": 418.42465346529576,
+  "assets": {
+   "plume_png": "tan20260724t013542c75s4001-A_plume_png.png",
+   "rgb_png": "tan20260724t013542c75s4001-A_rgb_png.png"
+  }
+ },
+ "tan20260724t013542c75s4001-B": {
+  "bounds": [
+   150.741381,
+   -33.874597,
+   150.778424,
+   -33.843836
+  ],
+  "datetime_utc": "2026-07-24T01:35:42.750Z",
+  "emission_kg_hr": 378.8095243405937,
+  "assets": {
+   "plume_png": "tan20260724t013542c75s4001-B_plume_png.png",
+   "rgb_png": "tan20260724t013542c75s4001-B_rgb_png.png"
+  }
+ },
  "tan20260719t014633c76s4001-E": {
   "bounds": [
    147.946056,
@@ -2001,18 +2029,18 @@
    "rgb_png": "tan20260106t040036c48s4001-A_rgb_png.png"
   }
  },
- "tan20250525t031347c58s4001-A": {
+ "tan20250629t031759c58s4001-A": {
   "bounds": [
-   115.199708,
-   -8.736386,
-   115.230889,
-   -8.705565
+   115.186084,
+   -8.735214,
+   115.224101,
+   -8.697636
   ],
-  "datetime_utc": "2025-05-25T03:13:47.580Z",
+  "datetime_utc": "2025-06-29T03:17:59.580Z",
   "emission_kg_hr": null,
   "assets": {
-   "plume_png": "tan20250525t031347c58s4001-A_plume_png.png",
-   "rgb_png": "tan20250525t031347c58s4001-A_rgb_png.png"
+   "plume_png": "tan20250629t031759c58s4001-A_plume_png.png",
+   "rgb_png": "tan20250629t031759c58s4001-A_rgb_png.png"
   }
  },
  "tan20250629t031759c58s4001-B": {
@@ -2029,18 +2057,18 @@
    "rgb_png": "tan20250629t031759c58s4001-B_rgb_png.png"
   }
  },
- "tan20250629t031759c58s4001-A": {
+ "tan20250525t031347c58s4001-A": {
   "bounds": [
-   115.186084,
-   -8.735214,
-   115.224101,
-   -8.697636
+   115.199708,
+   -8.736386,
+   115.230889,
+   -8.705565
   ],
-  "datetime_utc": "2025-06-29T03:17:59.580Z",
+  "datetime_utc": "2025-05-25T03:13:47.580Z",
   "emission_kg_hr": null,
   "assets": {
-   "plume_png": "tan20250629t031759c58s4001-A_plume_png.png",
-   "rgb_png": "tan20250629t031759c58s4001-A_rgb_png.png"
+   "plume_png": "tan20250525t031347c58s4001-A_plume_png.png",
+   "rgb_png": "tan20250525t031347c58s4001-A_rgb_png.png"
   }
  },
  "tan20250420t030853c00s4001-A": {
@@ -2337,20 +2365,6 @@
    "rgb_png": "tan20250227t002730c00s4001-C_rgb_png.png"
   }
  },
- "emi20250905t224342p14005-A": {
-  "bounds": [
-   151.050658,
-   -32.714607,
-   151.118644,
-   -32.657387
-  ],
-  "datetime_utc": "2025-09-05T22:43:42Z",
-  "emission_kg_hr": null,
-  "assets": {
-   "plume_png": "emi20250905t224342p14005-A_plume_png.png",
-   "rgb_png": "emi20250905t224342p14005-A_rgb_png.png"
-  }
- },
  "emi20250905t224342p14005-B": {
   "bounds": [
    151.053017,
@@ -2363,6 +2377,20 @@
   "assets": {
    "plume_png": "emi20250905t224342p14005-B_plume_png.png",
    "rgb_png": "emi20250905t224342p14005-B_rgb_png.png"
+  }
+ },
+ "emi20250905t224342p14005-A": {
+  "bounds": [
+   151.050658,
+   -32.714607,
+   151.118644,
+   -32.657387
+  ],
+  "datetime_utc": "2025-09-05T22:43:42Z",
+  "emission_kg_hr": null,
+  "assets": {
+   "plume_png": "emi20250905t224342p14005-A_plume_png.png",
+   "rgb_png": "emi20250905t224342p14005-A_rgb_png.png"
   }
  },
  "tan20251203t031900c96s4001-A": {
@@ -2769,34 +2797,6 @@
   "assets": {
    "plume_png": "emi20250920t051048p04003-A_plume_png.png",
    "rgb_png": "emi20250920t051048p04003-A_rgb_png.png"
-  }
- },
- "tan20251104t004752c54s4001-A": {
-  "bounds": [
-   153.107657,
-   -27.571472,
-   153.142086,
-   -27.540679
-  ],
-  "datetime_utc": "2025-11-04T00:47:52.540Z",
-  "emission_kg_hr": 619.4536804541564,
-  "assets": {
-   "plume_png": "tan20251104t004752c54s4001-A_plume_png.png",
-   "rgb_png": "tan20251104t004752c54s4001-A_rgb_png.png"
-  }
- },
- "tan20251104t004924c58s4001-A": {
-  "bounds": [
-   150.758528,
-   -34.221682,
-   150.796376,
-   -34.190652
-  ],
-  "datetime_utc": "2025-11-04T00:49:24.580Z",
-  "emission_kg_hr": null,
-  "assets": {
-   "plume_png": "tan20251104t004924c58s4001-A_plume_png.png",
-   "rgb_png": "tan20251104t004924c58s4001-A_rgb_png.png"
   }
  }
 }

@@ -1,31 +1,31 @@
 {
-  "generated_at": "2026-08-22T19:26:39+00:00",
+  "generated_at": "2026-08-23T19:25:39+00:00",
   "first_run": false,
   "new_count": 2,
   "new_plumes": [
     {
-      "plume_id": "imeo:6ee6cc76-decc-45a9-aeb3-390c7a2f43a9",
-      "provider": "UNEP IMEO",
-      "datetime_utc": "2026-07-23T00:36:17",
-      "lon": 150.96371,
-      "lat": -34.20237,
-      "emission_kg_hr": 1934.0,
-      "sector": "Coal",
-      "nearest_facility": "Metropolitan",
-      "facility_km": 3.1,
-      "provider_url": "https://methanedata.unep.org/plumes"
+      "plume_id": "cm:tan20260724t013542c75s4001-A",
+      "provider": "Carbon Mapper",
+      "datetime_utc": "2026-07-24T01:35:42.750Z",
+      "lon": 150.76542,
+      "lat": -33.89028,
+      "emission_kg_hr": 418.42465346529576,
+      "sector": "6A",
+      "nearest_facility": null,
+      "facility_km": null,
+      "provider_url": "https://data.carbonmapper.org/plume/tan20260724t013542c75s4001-A"
     },
     {
-      "plume_id": "imeo:0d91cc93-4d20-4245-842f-1fde410e07ce",
-      "provider": "UNEP IMEO",
-      "datetime_utc": "2026-07-23T00:36:17",
-      "lon": 150.72,
-      "lat": -34.18144,
-      "emission_kg_hr": 1028.0,
-      "sector": "Coal",
-      "nearest_facility": "Tower",
-      "facility_km": 4.21,
-      "provider_url": "https://methanedata.unep.org/plumes"
+      "plume_id": "cm:tan20260724t013542c75s4001-B",
+      "provider": "Carbon Mapper",
+      "datetime_utc": "2026-07-24T01:35:42.750Z",
+      "lon": 150.75991,
+      "lat": -33.8629,
+      "emission_kg_hr": 378.8095243405937,
+      "sector": "6A",
+      "nearest_facility": null,
+      "facility_km": null,
+      "provider_url": "https://data.carbonmapper.org/plume/tan20260724t013542c75s4001-B"
     }
   ]
 }
