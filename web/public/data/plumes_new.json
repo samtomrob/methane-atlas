@@ -1,31 +1,6 @@
 {
-  "generated_at": "2026-08-23T19:25:39+00:00",
+  "generated_at": "2026-08-24T19:33:38+00:00",
   "first_run": false,
-  "new_count": 2,
-  "new_plumes": [
-    {
-      "plume_id": "cm:tan20260724t013542c75s4001-A",
-      "provider": "Carbon Mapper",
-      "datetime_utc": "2026-07-24T01:35:42.750Z",
-      "lon": 150.76542,
-      "lat": -33.89028,
-      "emission_kg_hr": 418.42465346529576,
-      "sector": "6A",
-      "nearest_facility": null,
-      "facility_km": null,
-      "provider_url": "https://data.carbonmapper.org/plume/tan20260724t013542c75s4001-A"
-    },
-    {
-      "plume_id": "cm:tan20260724t013542c75s4001-B",
-      "provider": "Carbon Mapper",
-      "datetime_utc": "2026-07-24T01:35:42.750Z",
-      "lon": 150.75991,
-      "lat": -33.8629,
-      "emission_kg_hr": 378.8095243405937,
-      "sector": "6A",
-      "nearest_facility": null,
-      "facility_km": null,
-      "provider_url": "https://data.carbonmapper.org/plume/tan20260724t013542c75s4001-B"
-    }
-  ]
+  "new_count": 0,
+  "new_plumes": []
 }
