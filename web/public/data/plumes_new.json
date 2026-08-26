@@ -1,16 +1,16 @@
 {
-  "generated_at": "2026-08-25T19:35:54+00:00",
+  "generated_at": "2026-08-26T21:43:23+00:00",
   "first_run": false,
   "new_count": 1,
   "new_plumes": [
     {
-      "plume_id": "imeo:4dae8919-1c1b-46b4-96c7-e6d9984f5075",
+      "plume_id": "imeo:6d80c4ed-339d-40f5-a2a6-0f8ea371a081",
       "provider": "UNEP IMEO",
-      "datetime_utc": "2026-07-01T02:14:52",
-      "lon": 115.44957,
-      "lat": -20.78931,
-      "emission_kg_hr": 13432.0,
-      "sector": "Oil and Gas",
+      "datetime_utc": "2026-04-23T04:50:48",
+      "lon": 115.22151,
+      "lat": -8.72092,
+      "emission_kg_hr": 3509.0,
+      "sector": "Waste",
       "nearest_facility": null,
       "facility_km": null,
       "provider_url": "https://methanedata.unep.org/plumes"
