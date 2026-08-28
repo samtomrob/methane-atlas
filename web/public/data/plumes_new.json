@@ -1,18 +1,66 @@
 {
-  "generated_at": "2026-08-26T21:43:23+00:00",
+  "generated_at": "2026-08-28T03:31:34+00:00",
   "first_run": false,
-  "new_count": 1,
+  "new_count": 5,
   "new_plumes": [
     {
-      "plume_id": "imeo:6d80c4ed-339d-40f5-a2a6-0f8ea371a081",
+      "plume_id": "imeo:793c4cb4-7190-4e53-948a-99cdc2dc656e",
       "provider": "UNEP IMEO",
-      "datetime_utc": "2026-04-23T04:50:48",
-      "lon": 115.22151,
-      "lat": -8.72092,
-      "emission_kg_hr": 3509.0,
+      "datetime_utc": "2026-07-28T03:35:23",
+      "lon": 150.06,
+      "lat": -24.65,
+      "emission_kg_hr": 5000.0,
+      "sector": "Oil and Gas",
+      "nearest_facility": "Dawson",
+      "facility_km": 3.67,
+      "provider_url": "https://methanedata.unep.org/plumes"
+    },
+    {
+      "plume_id": "imeo:1668f16a-29a8-49b9-8b67-f3468369b8a7",
+      "provider": "UNEP IMEO",
+      "datetime_utc": "2025-10-10T00:21:00",
+      "lon": 151.11148,
+      "lat": -32.7083,
+      "emission_kg_hr": 811.0,
+      "sector": "Coal",
+      "nearest_facility": "Bulga",
+      "facility_km": 2.38,
+      "provider_url": "https://methanedata.unep.org/plumes"
+    },
+    {
+      "plume_id": "imeo:c257e206-7b8e-46cb-8c0e-5c18db42b47f",
+      "provider": "UNEP IMEO",
+      "datetime_utc": "2026-06-07T00:43:07",
+      "lon": 150.76871,
+      "lat": -33.89054,
+      "emission_kg_hr": 573.0,
       "sector": "Waste",
       "nearest_facility": null,
       "facility_km": null,
+      "provider_url": "https://methanedata.unep.org/plumes"
+    },
+    {
+      "plume_id": "imeo:7f346964-0473-462f-9017-2bd0beddd483",
+      "provider": "UNEP IMEO",
+      "datetime_utc": "2026-01-22T00:57:54",
+      "lon": 147.99677,
+      "lat": -21.96233,
+      "emission_kg_hr": 379.0,
+      "sector": "Coal",
+      "nearest_facility": "Moranbah",
+      "facility_km": 0.95,
+      "provider_url": "https://methanedata.unep.org/plumes"
+    },
+    {
+      "plume_id": "imeo:938ab7f3-e3a2-4d5f-a2ca-ddb9a48ed927",
+      "provider": "UNEP IMEO",
+      "datetime_utc": "2026-03-22T00:37:06",
+      "lon": 150.60399,
+      "lat": -34.24458,
+      "emission_kg_hr": null,
+      "sector": "Coal",
+      "nearest_facility": "Tahmoor",
+      "facility_km": 2.36,
       "provider_url": "https://methanedata.unep.org/plumes"
     }
   ]
