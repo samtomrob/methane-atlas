@@ -1,6 +1,19 @@
 {
-  "generated_at": "2026-08-29T21:34:16+00:00",
+  "generated_at": "2026-08-30T21:52:38+00:00",
   "first_run": false,
-  "new_count": 0,
-  "new_plumes": []
+  "new_count": 1,
+  "new_plumes": [
+    {
+      "plume_id": "cm:tan20260731t013512c59s4001-A",
+      "provider": "Carbon Mapper",
+      "datetime_utc": "2026-07-31T01:35:12.590Z",
+      "lon": 150.76569,
+      "lat": -33.89032,
+      "emission_kg_hr": 395.59418857046774,
+      "sector": "6A",
+      "nearest_facility": null,
+      "facility_km": null,
+      "provider_url": "https://data.carbonmapper.org/plume/tan20260731t013512c59s4001-A"
+    }
+  ]
 }
