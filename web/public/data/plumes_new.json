@@ -1,19 +1,31 @@
 {
-  "generated_at": "2026-08-30T21:52:38+00:00",
+  "generated_at": "2026-08-31T23:09:50+00:00",
   "first_run": false,
-  "new_count": 1,
+  "new_count": 2,
   "new_plumes": [
     {
-      "plume_id": "cm:tan20260731t013512c59s4001-A",
-      "provider": "Carbon Mapper",
-      "datetime_utc": "2026-07-31T01:35:12.590Z",
-      "lon": 150.76569,
-      "lat": -33.89032,
-      "emission_kg_hr": 395.59418857046774,
-      "sector": "6A",
-      "nearest_facility": null,
-      "facility_km": null,
-      "provider_url": "https://data.carbonmapper.org/plume/tan20260731t013512c59s4001-A"
+      "plume_id": "sron:20260828--32.630-151.090",
+      "provider": "SRON",
+      "datetime_utc": "2026-08-28T03:52:30Z",
+      "lon": 151.09,
+      "lat": -32.63,
+      "emission_kg_hr": 32000.0,
+      "sector": null,
+      "nearest_facility": "Mount Thorley",
+      "facility_km": 3.19,
+      "provider_url": "https://www.sron.nl/en/pillars/science/earth/methane/methane-plume-maps/"
+    },
+    {
+      "plume_id": "sron:20260822--21.700-147.970",
+      "provider": "SRON",
+      "datetime_utc": "2026-08-22T04:08:00Z",
+      "lon": 147.97,
+      "lat": -21.7,
+      "emission_kg_hr": 24000.0,
+      "sector": null,
+      "nearest_facility": "Centurion",
+      "facility_km": 5.84,
+      "provider_url": "https://www.sron.nl/en/pillars/science/earth/methane/methane-plume-maps/"
     }
   ]
 }
