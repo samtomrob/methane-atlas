@@ -1,78 +1,30 @@
 {
-  "generated_at": "2026-09-01T21:40:04+00:00",
+  "generated_at": "2026-09-02T21:39:23+00:00",
   "first_run": false,
-  "new_count": 6,
+  "new_count": 2,
   "new_plumes": [
     {
-      "plume_id": "imeo:ad78ba81-78c6-426b-8675-2c9f5e859779",
+      "plume_id": "imeo:ff64496f-2961-4ab0-8d57-63fe78fe2f6d",
       "provider": "UNEP IMEO",
-      "datetime_utc": "2026-07-14T03:29:52",
-      "lon": 151.41904,
-      "lat": -33.161,
-      "emission_kg_hr": 1549.0,
-      "sector": "Coal",
-      "nearest_facility": "Mandalong",
-      "facility_km": 6.25,
-      "provider_url": "https://methanedata.unep.org/plumes"
-    },
-    {
-      "plume_id": "imeo:7ef9d88f-8bb1-4fa7-912a-0a637f78a386",
-      "provider": "UNEP IMEO",
-      "datetime_utc": "2026-07-14T03:29:52",
-      "lon": 151.46083,
-      "lat": -33.11434,
-      "emission_kg_hr": 1426.0,
-      "sector": "Coal",
-      "nearest_facility": "Mandalong",
-      "facility_km": 0.39,
-      "provider_url": "https://methanedata.unep.org/plumes"
-    },
-    {
-      "plume_id": "imeo:a0679fd9-c193-4474-8748-8907f8189543",
-      "provider": "UNEP IMEO",
-      "datetime_utc": "2026-07-14T03:29:52",
-      "lon": 151.57045,
-      "lat": -33.06432,
-      "emission_kg_hr": 1368.0,
-      "sector": "Coal",
-      "nearest_facility": "Myuna",
-      "facility_km": 0.3,
-      "provider_url": "https://methanedata.unep.org/plumes"
-    },
-    {
-      "plume_id": "imeo:5fbc3f36-bd39-44e3-836e-e0db2b184f4c",
-      "provider": "UNEP IMEO",
-      "datetime_utc": "2026-06-15T00:47:20",
-      "lon": 148.56658,
-      "lat": -23.04631,
-      "emission_kg_hr": 975.0,
-      "sector": "Coal",
-      "nearest_facility": "Oaky Creek",
-      "facility_km": 8.37,
-      "provider_url": "https://methanedata.unep.org/plumes"
-    },
-    {
-      "plume_id": "imeo:19e40e01-027a-4ffd-9f03-dfda72b65663",
-      "provider": "UNEP IMEO",
-      "datetime_utc": "2026-05-22T01:30:50",
-      "lon": 148.26032,
-      "lat": -21.99396,
-      "emission_kg_hr": 858.0,
-      "sector": "Coal",
-      "nearest_facility": "Poitrel",
-      "facility_km": 5.87,
-      "provider_url": "https://methanedata.unep.org/plumes"
-    },
-    {
-      "plume_id": "imeo:7c8f4ae0-7510-4640-a83f-7b15d19eea50",
-      "provider": "UNEP IMEO",
-      "datetime_utc": "2026-06-03T00:39:37",
+      "datetime_utc": "2026-07-23T00:36:17",
       "lon": 150.82421,
       "lat": -34.21989,
-      "emission_kg_hr": 574.0,
+      "emission_kg_hr": 527.0,
       "sector": "Coal",
       "nearest_facility": "Appin",
       "facility_km": 3.01,
+      "provider_url": "https://methanedata.unep.org/plumes"
+    },
+    {
+      "plume_id": "imeo:cc274705-dfb8-4224-941b-baa6b28fd4ae",
+      "provider": "UNEP IMEO",
+      "datetime_utc": "2026-07-23T00:36:17",
+      "lon": 150.76425,
+      "lat": -34.38507,
+      "emission_kg_hr": 0.0,
+      "sector": "Coal",
+      "nearest_facility": "Dendrobium",
+      "facility_km": 6.63,
       "provider_url": "https://methanedata.unep.org/plumes"
     }
   ]
