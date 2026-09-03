@@ -1,31 +1,6 @@
 {
-  "generated_at": "2026-09-02T21:39:23+00:00",
+  "generated_at": "2026-09-03T21:36:26+00:00",
   "first_run": false,
-  "new_count": 2,
-  "new_plumes": [
-    {
-      "plume_id": "imeo:ff64496f-2961-4ab0-8d57-63fe78fe2f6d",
-      "provider": "UNEP IMEO",
-      "datetime_utc": "2026-07-23T00:36:17",
-      "lon": 150.82421,
-      "lat": -34.21989,
-      "emission_kg_hr": 527.0,
-      "sector": "Coal",
-      "nearest_facility": "Appin",
-      "facility_km": 3.01,
-      "provider_url": "https://methanedata.unep.org/plumes"
-    },
-    {
-      "plume_id": "imeo:cc274705-dfb8-4224-941b-baa6b28fd4ae",
-      "provider": "UNEP IMEO",
-      "datetime_utc": "2026-07-23T00:36:17",
-      "lon": 150.76425,
-      "lat": -34.38507,
-      "emission_kg_hr": 0.0,
-      "sector": "Coal",
-      "nearest_facility": "Dendrobium",
-      "facility_km": 6.63,
-      "provider_url": "https://methanedata.unep.org/plumes"
-    }
-  ]
+  "new_count": 0,
+  "new_plumes": []
 }

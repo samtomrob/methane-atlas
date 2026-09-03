@@ -1,14 +1,14 @@
 {
-  "generated_at": "2026-09-02T21:39:23+00:00",
+  "generated_at": "2026-09-03T21:36:26+00:00",
   "count": 828,
   "newest_detection": "2026-08-28T03:52:30Z",
-  "newest_days_old": 5,
-  "new_since_last_run": 2,
+  "newest_days_old": 6,
+  "new_since_last_run": 0,
   "first_run": false,
   "by_provider": {
     "Carbon Mapper": "375 plumes",
     "NASA EMIT": "11 plume complexes",
-    "UNEP IMEO": "511 in region (of 28,712 worldwide)",
+    "UNEP IMEO": "511 in region (of 28,768 worldwide)",
     "SRON": "72 detections from 87 weekly files"
   },
   "near_infrastructure": 690,
