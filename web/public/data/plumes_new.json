@@ -1,6 +1,19 @@
 {
-  "generated_at": "2026-09-03T21:36:26+00:00",
+  "generated_at": "2026-09-04T21:18:51+00:00",
   "first_run": false,
-  "new_count": 0,
-  "new_plumes": []
+  "new_count": 1,
+  "new_plumes": [
+    {
+      "plume_id": "imeo:828c58de-2466-4716-b483-b684be37c744",
+      "provider": "UNEP IMEO",
+      "datetime_utc": "2026-07-23T00:36:17",
+      "lon": 150.77088,
+      "lat": -34.20724,
+      "emission_kg_hr": 697.0,
+      "sector": "Coal",
+      "nearest_facility": "Appin",
+      "facility_km": 2.05,
+      "provider_url": "https://methanedata.unep.org/plumes"
+    }
+  ]
 }
