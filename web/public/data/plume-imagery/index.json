@@ -1,4 +1,32 @@
 {
+ "tan20260807t013252c01s4001-B": {
+  "bounds": [
+   150.333248,
+   -26.894998,
+   150.377734,
+   -26.855587
+  ],
+  "datetime_utc": "2026-08-07T01:32:52.010Z",
+  "emission_kg_hr": 1634.3028607215633,
+  "assets": {
+   "plume_png": "tan20260807t013252c01s4001-B_plume_png.png",
+   "rgb_png": "tan20260807t013252c01s4001-B_rgb_png.png"
+  }
+ },
+ "tan20260807t013252c01s4001-A": {
+  "bounds": [
+   150.356012,
+   -26.733823,
+   150.400135,
+   -26.694409
+  ],
+  "datetime_utc": "2026-08-07T01:32:52.010Z",
+  "emission_kg_hr": 1162.2544631314267,
+  "assets": {
+   "plume_png": "tan20260807t013252c01s4001-A_plume_png.png",
+   "rgb_png": "tan20260807t013252c01s4001-A_rgb_png.png"
+  }
+ },
  "tan20260731t013512c59s4001-A": {
   "bounds": [
    150.748399,
@@ -1091,20 +1119,6 @@
    "rgb_png": "tan20260408t034625c15s4001-A_rgb_png.png"
   }
  },
- "emi20250916t033822p03027-B": {
-  "bounds": [
-   147.988742,
-   -21.908642,
-   148.052738,
-   -21.849255
-  ],
-  "datetime_utc": "2025-09-16T03:38:22Z",
-  "emission_kg_hr": 4656.897364290414,
-  "assets": {
-   "plume_png": "emi20250916t033822p03027-B_plume_png.png",
-   "rgb_png": "emi20250916t033822p03027-B_rgb_png.png"
-  }
- },
  "emi20250916t033822p03027-A": {
   "bounds": [
    147.956936,
@@ -1117,6 +1131,20 @@
   "assets": {
    "plume_png": "emi20250916t033822p03027-A_plume_png.png",
    "rgb_png": "emi20250916t033822p03027-A_rgb_png.png"
+  }
+ },
+ "emi20250916t033822p03027-B": {
+  "bounds": [
+   147.988742,
+   -21.908642,
+   148.052738,
+   -21.849255
+  ],
+  "datetime_utc": "2025-09-16T03:38:22Z",
+  "emission_kg_hr": 4656.897364290414,
+  "assets": {
+   "plume_png": "emi20250916t033822p03027-B_plume_png.png",
+   "rgb_png": "emi20250916t033822p03027-B_rgb_png.png"
   }
  },
  "emi20250905t224342p14005-C": {
@@ -2043,18 +2071,18 @@
    "rgb_png": "tan20260106t040036c48s4001-A_rgb_png.png"
   }
  },
- "tan20250525t031347c58s4001-A": {
+ "tan20250629t031759c58s4001-B": {
   "bounds": [
-   115.199708,
-   -8.736386,
-   115.230889,
-   -8.705565
+   115.186084,
+   -8.735214,
+   115.224101,
+   -8.697636
   ],
-  "datetime_utc": "2025-05-25T03:13:47.580Z",
+  "datetime_utc": "2025-06-29T03:17:59.580Z",
   "emission_kg_hr": null,
   "assets": {
-   "plume_png": "tan20250525t031347c58s4001-A_plume_png.png",
-   "rgb_png": "tan20250525t031347c58s4001-A_rgb_png.png"
+   "plume_png": "tan20250629t031759c58s4001-B_plume_png.png",
+   "rgb_png": "tan20250629t031759c58s4001-B_rgb_png.png"
   }
  },
  "tan20250629t031759c58s4001-A": {
@@ -2071,18 +2099,18 @@
    "rgb_png": "tan20250629t031759c58s4001-A_rgb_png.png"
   }
  },
- "tan20250629t031759c58s4001-B": {
+ "tan20250525t031347c58s4001-A": {
   "bounds": [
-   115.186084,
-   -8.735214,
-   115.224101,
-   -8.697636
+   115.199708,
+   -8.736386,
+   115.230889,
+   -8.705565
   ],
-  "datetime_utc": "2025-06-29T03:17:59.580Z",
+  "datetime_utc": "2025-05-25T03:13:47.580Z",
   "emission_kg_hr": null,
   "assets": {
-   "plume_png": "tan20250629t031759c58s4001-B_plume_png.png",
-   "rgb_png": "tan20250629t031759c58s4001-B_rgb_png.png"
+   "plume_png": "tan20250525t031347c58s4001-A_plume_png.png",
+   "rgb_png": "tan20250525t031347c58s4001-A_rgb_png.png"
   }
  },
  "tan20250420t030853c00s4001-A": {
@@ -2769,34 +2797,6 @@
   "assets": {
    "plume_png": "tan20251106t010227c04s4001-C_plume_png.png",
    "rgb_png": "tan20251106t010227c04s4001-C_rgb_png.png"
-  }
- },
- "tan20251106t010227c04s4001-A": {
-  "bounds": [
-   150.746988,
-   -33.907977,
-   150.784696,
-   -33.876945
-  ],
-  "datetime_utc": "2025-11-06T01:02:27.040Z",
-  "emission_kg_hr": 335.0696076658218,
-  "assets": {
-   "plume_png": "tan20251106t010227c04s4001-A_plume_png.png",
-   "rgb_png": "tan20251106t010227c04s4001-A_rgb_png.png"
-  }
- },
- "tan20251106t010227c04s4001-B": {
-  "bounds": [
-   150.741787,
-   -33.884071,
-   150.779158,
-   -33.852771
-  ],
-  "datetime_utc": "2025-11-06T01:02:27.040Z",
-  "emission_kg_hr": 170.9921539648665,
-  "assets": {
-   "plume_png": "tan20251106t010227c04s4001-B_plume_png.png",
-   "rgb_png": "tan20251106t010227c04s4001-B_rgb_png.png"
   }
  }
 }
