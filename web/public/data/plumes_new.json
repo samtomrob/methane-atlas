@@ -1,31 +1,67 @@
 {
-  "generated_at": "2026-09-06T21:09:39+00:00",
+  "generated_at": "2026-09-07T21:56:45+00:00",
   "first_run": false,
-  "new_count": 2,
+  "new_count": 5,
   "new_plumes": [
     {
-      "plume_id": "cm:tan20260807t013252c01s4001-B",
-      "provider": "Carbon Mapper",
-      "datetime_utc": "2026-08-07T01:32:52.010Z",
-      "lon": 150.35363,
-      "lat": -26.88206,
-      "emission_kg_hr": 1634.3028607215633,
-      "sector": "1B2",
+      "plume_id": "sron:20260903--21.800-148.280",
+      "provider": "SRON",
+      "datetime_utc": "2026-09-03T03:43:18Z",
+      "lon": 148.28,
+      "lat": -21.8,
+      "emission_kg_hr": 50000.0,
+      "sector": null,
       "nearest_facility": null,
       "facility_km": null,
-      "provider_url": "https://data.carbonmapper.org/plume/tan20260807t013252c01s4001-B"
+      "provider_url": "https://www.sron.nl/en/pillars/science/earth/methane/methane-plume-maps/"
     },
     {
-      "plume_id": "cm:tan20260807t013252c01s4001-A",
-      "provider": "Carbon Mapper",
-      "datetime_utc": "2026-08-07T01:32:52.010Z",
-      "lon": 150.37739,
-      "lat": -26.72816,
-      "emission_kg_hr": 1162.2544631314267,
-      "sector": "1B2",
+      "plume_id": "sron:20260831--32.680-151.040",
+      "provider": "SRON",
+      "datetime_utc": "2026-08-31T04:36:26Z",
+      "lon": 151.04,
+      "lat": -32.68,
+      "emission_kg_hr": 29000.0,
+      "sector": null,
+      "nearest_facility": "Mount Thorley",
+      "facility_km": 4.25,
+      "provider_url": "https://www.sron.nl/en/pillars/science/earth/methane/methane-plume-maps/"
+    },
+    {
+      "plume_id": "sron:20260902--21.620-148.070",
+      "provider": "SRON",
+      "datetime_utc": "2026-09-02T04:02:02Z",
+      "lon": 148.07,
+      "lat": -21.62,
+      "emission_kg_hr": 21000.0,
+      "sector": null,
       "nearest_facility": null,
       "facility_km": null,
-      "provider_url": "https://data.carbonmapper.org/plume/tan20260807t013252c01s4001-A"
+      "provider_url": "https://www.sron.nl/en/pillars/science/earth/methane/methane-plume-maps/"
+    },
+    {
+      "plume_id": "sron:20260902--21.130-147.950",
+      "provider": "SRON",
+      "datetime_utc": "2026-09-02T04:02:09Z",
+      "lon": 147.95,
+      "lat": -21.13,
+      "emission_kg_hr": 12000.0,
+      "sector": null,
+      "nearest_facility": null,
+      "facility_km": null,
+      "provider_url": "https://www.sron.nl/en/pillars/science/earth/methane/methane-plume-maps/"
+    },
+    {
+      "plume_id": "imeo:85d843d2-4f04-4d83-a550-13509195a3bd",
+      "provider": "UNEP IMEO",
+      "datetime_utc": "2026-08-08T00:48:09",
+      "lon": 148.89513,
+      "lat": -23.83204,
+      "emission_kg_hr": 594.0,
+      "sector": "Coal",
+      "nearest_facility": null,
+      "facility_km": null,
+      "provider_url": "https://methanedata.unep.org/plumes"
     }
   ]
 }
