@@ -1,6 +1,31 @@
 {
-  "generated_at": "2026-09-10T21:29:35+00:00",
+  "generated_at": "2026-09-11T21:36:49+00:00",
   "first_run": false,
-  "new_count": 0,
-  "new_plumes": []
+  "new_count": 2,
+  "new_plumes": [
+    {
+      "plume_id": "imeo:3c06a7cd-5781-4dc9-9764-fc90f27374e6",
+      "provider": "UNEP IMEO",
+      "datetime_utc": "2026-08-11T04:13:36",
+      "lon": 148.99,
+      "lat": -23.26,
+      "emission_kg_hr": 13000.0,
+      "sector": "Coal",
+      "nearest_facility": "Yarrabee",
+      "facility_km": 7.38,
+      "provider_url": "https://methanedata.unep.org/plumes"
+    },
+    {
+      "plume_id": "imeo:aa2c3d1f-7cfa-4532-bb22-7e2a6a14bafd",
+      "provider": "UNEP IMEO",
+      "datetime_utc": "2026-08-12T00:29:40",
+      "lon": 148.32297,
+      "lat": -23.29948,
+      "emission_kg_hr": 3657.0,
+      "sector": "Coal",
+      "nearest_facility": "Kestrel",
+      "facility_km": 7.99,
+      "provider_url": "https://methanedata.unep.org/plumes"
+    }
+  ]
 }
