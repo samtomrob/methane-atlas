@@ -1,43 +1,6 @@
 {
-  "generated_at": "2026-09-12T21:19:32+00:00",
+  "generated_at": "2026-09-13T21:18:48+00:00",
   "first_run": false,
-  "new_count": 3,
-  "new_plumes": [
-    {
-      "plume_id": "imeo:c07f5499-7582-42db-9344-b901ecf971f4",
-      "provider": "UNEP IMEO",
-      "datetime_utc": "2026-08-12T03:54:41",
-      "lon": 149.46,
-      "lat": -23.4,
-      "emission_kg_hr": 52000.0,
-      "sector": "Coal",
-      "nearest_facility": null,
-      "facility_km": null,
-      "provider_url": "https://methanedata.unep.org/plumes"
-    },
-    {
-      "plume_id": "imeo:e86e1dbc-85af-4181-b598-b0d000240257",
-      "provider": "UNEP IMEO",
-      "datetime_utc": "2026-08-12T03:55:16",
-      "lon": 148.73,
-      "lat": -22.22,
-      "emission_kg_hr": 38000.0,
-      "sector": "Coal",
-      "nearest_facility": null,
-      "facility_km": null,
-      "provider_url": "https://methanedata.unep.org/plumes"
-    },
-    {
-      "plume_id": "imeo:e7c44de3-500a-4223-bb2e-84174102e3fb",
-      "provider": "UNEP IMEO",
-      "datetime_utc": "2026-08-12T03:55:16",
-      "lon": 148.67,
-      "lat": -21.97,
-      "emission_kg_hr": 24000.0,
-      "sector": "Coal",
-      "nearest_facility": null,
-      "facility_km": null,
-      "provider_url": "https://methanedata.unep.org/plumes"
-    }
-  ]
+  "new_count": 0,
+  "new_plumes": []
 }
