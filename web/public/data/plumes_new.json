@@ -1,6 +1,31 @@
 {
-  "generated_at": "2026-09-13T21:18:48+00:00",
+  "generated_at": "2026-09-14T22:22:27+00:00",
   "first_run": false,
-  "new_count": 0,
-  "new_plumes": []
+  "new_count": 2,
+  "new_plumes": [
+    {
+      "plume_id": "sron:20260907--21.680-148.160",
+      "provider": "SRON",
+      "datetime_utc": "2026-09-07T04:08:21Z",
+      "lon": 148.16,
+      "lat": -21.68,
+      "emission_kg_hr": 38000.0,
+      "sector": null,
+      "nearest_facility": "Ironbark No 1",
+      "facility_km": 6.27,
+      "provider_url": "https://www.sron.nl/en/pillars/science/earth/methane/methane-plume-maps/"
+    },
+    {
+      "plume_id": "sron:20260912--32.480-151.070",
+      "provider": "SRON",
+      "datetime_utc": "2026-09-12T04:11:35Z",
+      "lon": 151.07,
+      "lat": -32.48,
+      "emission_kg_hr": 11000.0,
+      "sector": null,
+      "nearest_facility": "Ashton",
+      "facility_km": 1.7,
+      "provider_url": "https://www.sron.nl/en/pillars/science/earth/methane/methane-plume-maps/"
+    }
+  ]
 }
