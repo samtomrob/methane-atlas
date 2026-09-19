@@ -1,19 +1,6 @@
 {
-  "generated_at": "2026-09-18T21:32:10+00:00",
+  "generated_at": "2026-09-19T21:22:18+00:00",
   "first_run": false,
-  "new_count": 1,
-  "new_plumes": [
-    {
-      "plume_id": "imeo:ec1fb118-c6cc-4935-a349-197efa8b9dad",
-      "provider": "UNEP IMEO",
-      "datetime_utc": "2026-08-19T00:35:37",
-      "lon": 149.8754,
-      "lat": -30.5172,
-      "emission_kg_hr": 672.0,
-      "sector": "Coal",
-      "nearest_facility": "Narrabri",
-      "facility_km": 1.87,
-      "provider_url": "https://methanedata.unep.org/plumes"
-    }
-  ]
+  "new_count": 0,
+  "new_plumes": []
 }
