@@ -1,19 +1,6 @@
 {
-  "generated_at": "2026-09-22T21:54:32+00:00",
+  "generated_at": "2026-09-23T22:09:44+00:00",
   "first_run": false,
-  "new_count": 1,
-  "new_plumes": [
-    {
-      "plume_id": "imeo:30cf9eb8-1a33-493e-8412-ef21e7387c45",
-      "provider": "UNEP IMEO",
-      "datetime_utc": "2026-08-22T04:08:00",
-      "lon": 147.97,
-      "lat": -21.7,
-      "emission_kg_hr": 24000.0,
-      "sector": "Coal",
-      "nearest_facility": "Centurion",
-      "facility_km": 5.84,
-      "provider_url": "https://methanedata.unep.org/plumes"
-    }
-  ]
+  "new_count": 0,
+  "new_plumes": []
 }
