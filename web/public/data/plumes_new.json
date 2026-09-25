@@ -1,42 +1,30 @@
 {
-  "generated_at": "2026-09-24T22:09:34+00:00",
+  "generated_at": "2026-09-25T22:07:30+00:00",
   "first_run": false,
-  "new_count": 3,
+  "new_count": 2,
   "new_plumes": [
     {
-      "plume_id": "emit:EMIT_L2B_CH4PLM_002_20230903T010049_001659",
-      "provider": "NASA EMIT",
-      "datetime_utc": "2023-09-03T01:00:49Z",
-      "lon": 144.39847,
-      "lat": -21.71473,
-      "emission_kg_hr": null,
-      "sector": null,
-      "nearest_facility": null,
-      "facility_km": null,
-      "provider_url": "https://earth.jpl.nasa.gov/emit/data/data-portal/Greenhouse-Gases/"
-    },
-    {
-      "plume_id": "emit:EMIT_L2B_CH4PLM_002_20240225T041108_002884",
-      "provider": "NASA EMIT",
-      "datetime_utc": "2024-02-25T04:11:08Z",
-      "lon": 150.72363,
-      "lat": -34.19191,
-      "emission_kg_hr": null,
-      "sector": null,
-      "nearest_facility": "Tower",
-      "facility_km": 3.09,
-      "provider_url": "https://earth.jpl.nasa.gov/emit/data/data-portal/Greenhouse-Gases/"
-    },
-    {
-      "plume_id": "imeo:3f23a560-bbdb-431c-ba97-98450a75b62b",
+      "plume_id": "imeo:00bf0b93-caed-4788-bc89-85dfb6476a62",
       "provider": "UNEP IMEO",
-      "datetime_utc": "2026-08-17T00:16:28",
-      "lon": 148.48388,
-      "lat": -23.45964,
+      "datetime_utc": "2026-08-26T02:02:04",
+      "lon": 147.96944,
+      "lat": -21.65978,
       "emission_kg_hr": null,
       "sector": "Coal",
-      "nearest_facility": "Ensham",
-      "facility_km": 1.5,
+      "nearest_facility": "Centurion",
+      "facility_km": 1.54,
+      "provider_url": "https://methanedata.unep.org/plumes"
+    },
+    {
+      "plume_id": "imeo:cd521c72-694a-4ce4-988e-8d358c4120ca",
+      "provider": "UNEP IMEO",
+      "datetime_utc": "2026-08-26T02:02:04",
+      "lon": 147.99512,
+      "lat": -21.88795,
+      "emission_kg_hr": null,
+      "sector": "Coal",
+      "nearest_facility": "Grosvenor",
+      "facility_km": 1.65,
       "provider_url": "https://methanedata.unep.org/plumes"
     }
   ]
