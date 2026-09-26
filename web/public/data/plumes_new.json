@@ -1,31 +1,6 @@
 {
-  "generated_at": "2026-09-25T22:07:30+00:00",
+  "generated_at": "2026-09-26T21:54:54+00:00",
   "first_run": false,
-  "new_count": 2,
-  "new_plumes": [
-    {
-      "plume_id": "imeo:00bf0b93-caed-4788-bc89-85dfb6476a62",
-      "provider": "UNEP IMEO",
-      "datetime_utc": "2026-08-26T02:02:04",
-      "lon": 147.96944,
-      "lat": -21.65978,
-      "emission_kg_hr": null,
-      "sector": "Coal",
-      "nearest_facility": "Centurion",
-      "facility_km": 1.54,
-      "provider_url": "https://methanedata.unep.org/plumes"
-    },
-    {
-      "plume_id": "imeo:cd521c72-694a-4ce4-988e-8d358c4120ca",
-      "provider": "UNEP IMEO",
-      "datetime_utc": "2026-08-26T02:02:04",
-      "lon": 147.99512,
-      "lat": -21.88795,
-      "emission_kg_hr": null,
-      "sector": "Coal",
-      "nearest_facility": "Grosvenor",
-      "facility_km": 1.65,
-      "provider_url": "https://methanedata.unep.org/plumes"
-    }
-  ]
+  "new_count": 0,
+  "new_plumes": []
 }
