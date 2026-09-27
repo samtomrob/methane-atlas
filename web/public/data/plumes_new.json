@@ -1,6 +1,43 @@
 {
-  "generated_at": "2026-09-26T21:54:54+00:00",
+  "generated_at": "2026-09-27T21:57:00+00:00",
   "first_run": false,
-  "new_count": 0,
-  "new_plumes": []
+  "new_count": 3,
+  "new_plumes": [
+    {
+      "plume_id": "cm:tan20260828t013350c43s4001-C",
+      "provider": "Carbon Mapper",
+      "datetime_utc": "2026-08-28T01:33:50.430Z",
+      "lon": 151.0501,
+      "lat": -32.61297,
+      "emission_kg_hr": 1321.5793535319426,
+      "sector": "1B1a",
+      "nearest_facility": "Warkworth",
+      "facility_km": 0.11,
+      "provider_url": "https://data.carbonmapper.org/plume/tan20260828t013350c43s4001-C"
+    },
+    {
+      "plume_id": "cm:tan20260828t013350c43s4001-A",
+      "provider": "Carbon Mapper",
+      "datetime_utc": "2026-08-28T01:33:50.430Z",
+      "lon": 150.81371,
+      "lat": -32.27905,
+      "emission_kg_hr": 984.0955943610608,
+      "sector": "1B1a",
+      "nearest_facility": "Bengalla",
+      "facility_km": 1.23,
+      "provider_url": "https://data.carbonmapper.org/plume/tan20260828t013350c43s4001-A"
+    },
+    {
+      "plume_id": "cm:tan20260828t013350c43s4001-D",
+      "provider": "Carbon Mapper",
+      "datetime_utc": "2026-08-28T01:33:50.430Z",
+      "lon": 151.04262,
+      "lat": -32.60648,
+      "emission_kg_hr": 878.1644326203634,
+      "sector": "1B1a",
+      "nearest_facility": "Warkworth",
+      "facility_km": 1.06,
+      "provider_url": "https://data.carbonmapper.org/plume/tan20260828t013350c43s4001-D"
+    }
+  ]
 }
