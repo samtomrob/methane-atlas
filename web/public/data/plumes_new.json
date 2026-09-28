@@ -1,43 +1,43 @@
 {
-  "generated_at": "2026-09-27T21:57:00+00:00",
+  "generated_at": "2026-09-28T23:46:39+00:00",
   "first_run": false,
   "new_count": 3,
   "new_plumes": [
     {
-      "plume_id": "cm:tan20260828t013350c43s4001-C",
-      "provider": "Carbon Mapper",
-      "datetime_utc": "2026-08-28T01:33:50.430Z",
-      "lon": 151.0501,
-      "lat": -32.61297,
-      "emission_kg_hr": 1321.5793535319426,
-      "sector": "1B1a",
-      "nearest_facility": "Warkworth",
-      "facility_km": 0.11,
-      "provider_url": "https://data.carbonmapper.org/plume/tan20260828t013350c43s4001-C"
+      "plume_id": "sron:20260921--21.890-147.850",
+      "provider": "SRON",
+      "datetime_utc": "2026-09-21T04:46:19Z",
+      "lon": 147.85,
+      "lat": -21.89,
+      "emission_kg_hr": 58000.0,
+      "sector": null,
+      "nearest_facility": null,
+      "facility_km": null,
+      "provider_url": "https://www.sron.nl/en/pillars/science/earth/methane/methane-plume-maps/"
     },
     {
-      "plume_id": "cm:tan20260828t013350c43s4001-A",
-      "provider": "Carbon Mapper",
-      "datetime_utc": "2026-08-28T01:33:50.430Z",
-      "lon": 150.81371,
-      "lat": -32.27905,
-      "emission_kg_hr": 984.0955943610608,
-      "sector": "1B1a",
-      "nearest_facility": "Bengalla",
-      "facility_km": 1.23,
-      "provider_url": "https://data.carbonmapper.org/plume/tan20260828t013350c43s4001-A"
+      "plume_id": "imeo:d8b62152-d769-4a3e-a9fc-4919165c51b8",
+      "provider": "UNEP IMEO",
+      "datetime_utc": "2026-08-28T03:52:30",
+      "lon": 151.09,
+      "lat": -32.63,
+      "emission_kg_hr": 32000.0,
+      "sector": "Coal",
+      "nearest_facility": "Mount Thorley",
+      "facility_km": 3.19,
+      "provider_url": "https://methanedata.unep.org/plumes"
     },
     {
-      "plume_id": "cm:tan20260828t013350c43s4001-D",
+      "plume_id": "cm:tan20260829t035642c23s4001-A",
       "provider": "Carbon Mapper",
-      "datetime_utc": "2026-08-28T01:33:50.430Z",
-      "lon": 151.04262,
-      "lat": -32.60648,
-      "emission_kg_hr": 878.1644326203634,
-      "sector": "1B1a",
-      "nearest_facility": "Warkworth",
-      "facility_km": 1.06,
-      "provider_url": "https://data.carbonmapper.org/plume/tan20260828t013350c43s4001-D"
+      "datetime_utc": "2026-08-29T03:56:42.230Z",
+      "lon": 115.44652,
+      "lat": -20.78738,
+      "emission_kg_hr": 7804.03271013109,
+      "sector": "1B2",
+      "nearest_facility": null,
+      "facility_km": null,
+      "provider_url": "https://data.carbonmapper.org/plume/tan20260829t035642c23s4001-A"
     }
   ]
 }
