@@ -1,43 +1,43 @@
 {
-  "generated_at": "2026-09-28T23:46:39+00:00",
+  "generated_at": "2026-09-29T22:53:26+00:00",
   "first_run": false,
   "new_count": 3,
   "new_plumes": [
     {
-      "plume_id": "sron:20260921--21.890-147.850",
-      "provider": "SRON",
-      "datetime_utc": "2026-09-21T04:46:19Z",
-      "lon": 147.85,
-      "lat": -21.89,
-      "emission_kg_hr": 58000.0,
-      "sector": null,
-      "nearest_facility": null,
-      "facility_km": null,
-      "provider_url": "https://www.sron.nl/en/pillars/science/earth/methane/methane-plume-maps/"
-    },
-    {
-      "plume_id": "imeo:d8b62152-d769-4a3e-a9fc-4919165c51b8",
+      "plume_id": "imeo:11e7c41e-8b44-4d4b-a0db-79c003d783f2",
       "provider": "UNEP IMEO",
-      "datetime_utc": "2026-08-28T03:52:30",
-      "lon": 151.09,
-      "lat": -32.63,
-      "emission_kg_hr": 32000.0,
+      "datetime_utc": "2026-08-30T00:28:38",
+      "lon": 148.57635,
+      "lat": -22.96365,
+      "emission_kg_hr": 974.0,
       "sector": "Coal",
-      "nearest_facility": "Mount Thorley",
-      "facility_km": 3.19,
+      "nearest_facility": "Aquila-Capcoal",
+      "facility_km": 4.43,
       "provider_url": "https://methanedata.unep.org/plumes"
     },
     {
-      "plume_id": "cm:tan20260829t035642c23s4001-A",
+      "plume_id": "imeo:81065975-6974-40eb-b79e-aca8a0edb226",
+      "provider": "UNEP IMEO",
+      "datetime_utc": "2026-08-30T00:28:38",
+      "lon": 148.58093,
+      "lat": -22.98808,
+      "emission_kg_hr": 419.0,
+      "sector": "Coal",
+      "nearest_facility": "Aquila-Capcoal",
+      "facility_km": 7.08,
+      "provider_url": "https://methanedata.unep.org/plumes"
+    },
+    {
+      "plume_id": "cm:tan20260830t014325c39s4001-A",
       "provider": "Carbon Mapper",
-      "datetime_utc": "2026-08-29T03:56:42.230Z",
-      "lon": 115.44652,
-      "lat": -20.78738,
-      "emission_kg_hr": 7804.03271013109,
-      "sector": "1B2",
-      "nearest_facility": null,
-      "facility_km": null,
-      "provider_url": "https://data.carbonmapper.org/plume/tan20260829t035642c23s4001-A"
+      "datetime_utc": "2026-08-30T01:43:25.390Z",
+      "lon": 148.32284,
+      "lat": -23.29977,
+      "emission_kg_hr": null,
+      "sector": "1B1a",
+      "nearest_facility": "Kestrel",
+      "facility_km": 8.03,
+      "provider_url": "https://data.carbonmapper.org/plume/tan20260830t014325c39s4001-A"
     }
   ]
 }
