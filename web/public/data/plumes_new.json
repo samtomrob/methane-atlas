@@ -1,55 +1,31 @@
 {
-  "generated_at": "2026-10-02T22:52:15+00:00",
+  "generated_at": "2026-10-03T22:03:34+00:00",
   "first_run": false,
-  "new_count": 4,
+  "new_count": 2,
   "new_plumes": [
     {
-      "plume_id": "cm:tan20260902t012022c17s4001-D",
-      "provider": "Carbon Mapper",
-      "datetime_utc": "2026-09-02T01:20:22.170Z",
-      "lon": 150.7198,
-      "lat": -34.18116,
-      "emission_kg_hr": 5974.655091049047,
-      "sector": "1B1a",
-      "nearest_facility": "Tower",
-      "facility_km": 4.24,
-      "provider_url": "https://data.carbonmapper.org/plume/tan20260902t012022c17s4001-D"
+      "plume_id": "imeo:92385889-630e-494d-b670-5ef4c7c561d4",
+      "provider": "UNEP IMEO",
+      "datetime_utc": "2026-09-02T04:02:02",
+      "lon": 148.07,
+      "lat": -21.62,
+      "emission_kg_hr": 21000.0,
+      "sector": "Coal",
+      "nearest_facility": null,
+      "facility_km": null,
+      "provider_url": "https://methanedata.unep.org/plumes"
     },
     {
-      "plume_id": "cm:tan20260902t012022c17s4001-B",
-      "provider": "Carbon Mapper",
-      "datetime_utc": "2026-09-02T01:20:22.170Z",
-      "lon": 150.96335,
-      "lat": -34.20258,
-      "emission_kg_hr": 2440.0649771398002,
-      "sector": "1B1a",
-      "nearest_facility": "Metropolitan",
-      "facility_km": 3.14,
-      "provider_url": "https://data.carbonmapper.org/plume/tan20260902t012022c17s4001-B"
-    },
-    {
-      "plume_id": "cm:tan20260902t012022c17s4001-C",
-      "provider": "Carbon Mapper",
-      "datetime_utc": "2026-09-02T01:20:22.170Z",
-      "lon": 150.77034,
-      "lat": -34.20744,
-      "emission_kg_hr": 1597.3206423987424,
-      "sector": "1B1a",
-      "nearest_facility": "Appin",
-      "facility_km": 2.09,
-      "provider_url": "https://data.carbonmapper.org/plume/tan20260902t012022c17s4001-C"
-    },
-    {
-      "plume_id": "cm:tan20260902t012022c17s4001-A",
-      "provider": "Carbon Mapper",
-      "datetime_utc": "2026-09-02T01:20:22.170Z",
-      "lon": 150.82417,
-      "lat": -34.22015,
-      "emission_kg_hr": 1116.32948371912,
-      "sector": "1B1a",
-      "nearest_facility": "Appin",
-      "facility_km": 3.01,
-      "provider_url": "https://data.carbonmapper.org/plume/tan20260902t012022c17s4001-A"
+      "plume_id": "imeo:28a76cff-a174-44ce-ae83-11b1999bd8ea",
+      "provider": "UNEP IMEO",
+      "datetime_utc": "2026-09-02T04:02:09",
+      "lon": 147.95,
+      "lat": -21.13,
+      "emission_kg_hr": 12000.0,
+      "sector": "Coal",
+      "nearest_facility": null,
+      "facility_km": null,
+      "provider_url": "https://methanedata.unep.org/plumes"
     }
   ]
 }
