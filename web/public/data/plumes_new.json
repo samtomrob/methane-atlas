@@ -1,19 +1,55 @@
 {
-  "generated_at": "2026-10-06T00:42:07+00:00",
+  "generated_at": "2026-10-06T22:56:45+00:00",
   "first_run": false,
-  "new_count": 1,
+  "new_count": 4,
   "new_plumes": [
     {
-      "plume_id": "cm:tan20260905t035218c27s4001-A",
+      "plume_id": "cm:tan20260906t014338c26s4001-C",
       "provider": "Carbon Mapper",
-      "datetime_utc": "2026-09-05T03:52:18.270Z",
-      "lon": 119.49105,
-      "lat": -5.17544,
-      "emission_kg_hr": 408.86075280661584,
-      "sector": "6A",
-      "nearest_facility": null,
-      "facility_km": null,
-      "provider_url": "https://data.carbonmapper.org/plume/tan20260905t035218c27s4001-A"
+      "datetime_utc": "2026-09-06T01:43:38.260Z",
+      "lon": 148.26036,
+      "lat": -21.99422,
+      "emission_kg_hr": 1261.6661555493508,
+      "sector": "1B1a",
+      "nearest_facility": "Poitrel",
+      "facility_km": 5.85,
+      "provider_url": "https://data.carbonmapper.org/plume/tan20260906t014338c26s4001-C"
+    },
+    {
+      "plume_id": "cm:tan20260906t014338c26s4001-D",
+      "provider": "Carbon Mapper",
+      "datetime_utc": "2026-09-06T01:43:38.260Z",
+      "lon": 148.24882,
+      "lat": -21.97289,
+      "emission_kg_hr": 772.1776359679052,
+      "sector": "1B1a",
+      "nearest_facility": "Carborough Downs",
+      "facility_km": 4.78,
+      "provider_url": "https://data.carbonmapper.org/plume/tan20260906t014338c26s4001-D"
+    },
+    {
+      "plume_id": "cm:tan20260906t014338c26s4001-A",
+      "provider": "Carbon Mapper",
+      "datetime_utc": "2026-09-06T01:43:38.260Z",
+      "lon": 148.58105,
+      "lat": -22.98821,
+      "emission_kg_hr": 471.8072968051915,
+      "sector": "1B1a",
+      "nearest_facility": "Aquila-Capcoal",
+      "facility_km": 7.1,
+      "provider_url": "https://data.carbonmapper.org/plume/tan20260906t014338c26s4001-A"
+    },
+    {
+      "plume_id": "cm:tan20260906t014338c26s4001-B",
+      "provider": "Carbon Mapper",
+      "datetime_utc": "2026-09-06T01:43:38.260Z",
+      "lon": 148.56631,
+      "lat": -23.04628,
+      "emission_kg_hr": 254.09621086963546,
+      "sector": "1B1a",
+      "nearest_facility": "Oaky Creek",
+      "facility_km": 8.35,
+      "provider_url": "https://data.carbonmapper.org/plume/tan20260906t014338c26s4001-B"
     }
   ]
 }
