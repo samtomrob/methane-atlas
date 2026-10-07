@@ -1,55 +1,43 @@
 {
-  "generated_at": "2026-10-06T22:56:45+00:00",
+  "generated_at": "2026-10-07T23:31:03+00:00",
   "first_run": false,
-  "new_count": 4,
+  "new_count": 3,
   "new_plumes": [
     {
-      "plume_id": "cm:tan20260906t014338c26s4001-C",
+      "plume_id": "cm:tan20260907t040637c25s4001-B",
       "provider": "Carbon Mapper",
-      "datetime_utc": "2026-09-06T01:43:38.260Z",
-      "lon": 148.26036,
-      "lat": -21.99422,
-      "emission_kg_hr": 1261.6661555493508,
-      "sector": "1B1a",
-      "nearest_facility": "Poitrel",
-      "facility_km": 5.85,
-      "provider_url": "https://data.carbonmapper.org/plume/tan20260906t014338c26s4001-C"
+      "datetime_utc": "2026-09-07T04:06:37.250Z",
+      "lon": 115.21135,
+      "lat": -8.71769,
+      "emission_kg_hr": 937.1170895875841,
+      "sector": "1A1",
+      "nearest_facility": null,
+      "facility_km": null,
+      "provider_url": "https://data.carbonmapper.org/plume/tan20260907t040637c25s4001-B"
     },
     {
-      "plume_id": "cm:tan20260906t014338c26s4001-D",
-      "provider": "Carbon Mapper",
-      "datetime_utc": "2026-09-06T01:43:38.260Z",
-      "lon": 148.24882,
-      "lat": -21.97289,
-      "emission_kg_hr": 772.1776359679052,
-      "sector": "1B1a",
-      "nearest_facility": "Carborough Downs",
-      "facility_km": 4.78,
-      "provider_url": "https://data.carbonmapper.org/plume/tan20260906t014338c26s4001-D"
+      "plume_id": "imeo:deb30160-8f0f-4bbf-82f3-7f12d9439158",
+      "provider": "UNEP IMEO",
+      "datetime_utc": "2026-08-30T00:28:38",
+      "lon": 148.59326,
+      "lat": -23.04752,
+      "emission_kg_hr": 658.0,
+      "sector": "Coal",
+      "nearest_facility": null,
+      "facility_km": null,
+      "provider_url": "https://methanedata.unep.org/plumes"
     },
     {
-      "plume_id": "cm:tan20260906t014338c26s4001-A",
+      "plume_id": "cm:tan20260907t040637c25s4001-A",
       "provider": "Carbon Mapper",
-      "datetime_utc": "2026-09-06T01:43:38.260Z",
-      "lon": 148.58105,
-      "lat": -22.98821,
-      "emission_kg_hr": 471.8072968051915,
-      "sector": "1B1a",
-      "nearest_facility": "Aquila-Capcoal",
-      "facility_km": 7.1,
-      "provider_url": "https://data.carbonmapper.org/plume/tan20260906t014338c26s4001-A"
-    },
-    {
-      "plume_id": "cm:tan20260906t014338c26s4001-B",
-      "provider": "Carbon Mapper",
-      "datetime_utc": "2026-09-06T01:43:38.260Z",
-      "lon": 148.56631,
-      "lat": -23.04628,
-      "emission_kg_hr": 254.09621086963546,
-      "sector": "1B1a",
-      "nearest_facility": "Oaky Creek",
-      "facility_km": 8.35,
-      "provider_url": "https://data.carbonmapper.org/plume/tan20260906t014338c26s4001-B"
+      "datetime_utc": "2026-09-07T04:06:37.250Z",
+      "lon": 115.22131,
+      "lat": -8.72209,
+      "emission_kg_hr": 515.6733795344519,
+      "sector": "6A",
+      "nearest_facility": null,
+      "facility_km": null,
+      "provider_url": "https://data.carbonmapper.org/plume/tan20260907t040637c25s4001-A"
     }
   ]
 }
